@@ -20,3 +20,9 @@ tail  -n  10  test.log   查询日志尾部最后10行的日志;
  tail -n +10 test.log    查询10行之后的所有日志;
 ```
 
+查看端口运行情况
+
+```
+ netstat -nultp
+```
+
