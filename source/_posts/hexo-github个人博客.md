@@ -108,3 +108,12 @@ gp(git push)
 </div>
 ```
 
+更改关于/项目页面
+
+```
+hexo new page about/project
+就会在source页面产生相应文件夹
+编辑里面的index.md就能够达到自己想要的结果
+
+```
+
