@@ -16,3 +16,10 @@ preferences->editor->file types->ignored filres and folders 添加.idea  *.iml
 https://www.cnblogs.com/yeyuting/p/14334247.html
 ```
 
+将项目由普通文件变为项目
+
+```
+maven->unignore Projects
+project struture->modules->选中src下java将其变为Source
+```
+
