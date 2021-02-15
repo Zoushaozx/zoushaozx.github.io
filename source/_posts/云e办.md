@@ -446,11 +446,247 @@ jwt:
     private Long expiration;
     
 7⃣️主要功能
-	根据用户名生成用户名
-	从token拿用户名
-	判断touken是否失效
-	是否可以刷新token
-	刷新token
-	
+	一 根据用户名生成token
+	1，根据用户信息生成token
+		public String generatorToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        return generatorToken();
+        }
+  2，根据荷载生成JWT TOKEN
+  	private String generatorToken(Map<String,Object> claims) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(generateExpirationDate())
+                .signWith(SignatureAlgorithm.ES512,secret)
+                .compact();
+                }
+  3，生成token失效时间
+   private Date generateExpirationDate() {
+        return new Date(System.currentTimeMillis() + expiration * 1000);
+    }
+    
+ 二 从token拿用户名
+  1，从token中获得登录用户名
+  public String getUserNameFromToken(String token) {
+        String username;
+        try {
+            Claims claims = getClaimsFromToken(token);
+            username = claims.getSubject();
+        } catch (Exception e) {
+            username = null;
+        }
+        return username;
+    }
+  2，从token里面获取荷载
+  private Claims getClaimsFromToken(String token) {
+        Claims claims = null;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return claims;
+    }
+    
+    
+	三 判断token是否失效
+	1，token是否过期
+	 private boolean isTokenExpired(String token) {
+        Date expiredDate = getExpiredDateFromToken(token);
+        return expiredDate.before(new Date());
+    }
+    private Date getExpiredDateFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.getExpiration();
+    }
+	2，token里面的用户名与userDetail里面用户名是否一致
+	public boolean validateToken(String token, UserDetails userDetails) {
+        String username = getUserNameFromToken(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+    
+    
+	四 是否可以刷新token
+	 public boolean canRefresh(String token) {
+        return !isTokenExpired(token);
+    }
+	五 刷新token
+	public String refreshToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        return generatorToken(claims);
+    }
+```
+
+公共返回对象
+
+```
+登录流程：
+	前端传用户名和密码
+	后端校验用户名和密码，
+		有错误就重新输入
+		正确就会生成JWT令牌，并且返回给前端，前端获得JWT令牌就会放入到请求头里面，任何请求都会携带JWT令牌，
+		后端会有对应的拦截器，对JWT令牌做相应的验证，验证通过才能访问对应的接口，验证不通过，令牌可能失效了，可能是用户名有问题，或者密码有问题，不是合法登陆
+		
+1⃣️在pojo新建公共返回对象RespBean
+2⃣️加注解@Data，生成getters and setters
+	@NoArgsConstructor 无参
+	@AllArgsConstructor	有参
+3⃣️成功，失败返回方法，公共变量，code message obj
+ public static RespBean success(String message) {
+        return new RespBean(200, message, null);
+    }
+```
+
+登录之后返回token
+
+```
+一 前端传用户名密码，后端校验
+	1⃣️Admin类，里面实现springsecurity框架UserDetails
+	实现方法，除了getAuthorities的返回值不变，isEnabled返回值为属性字段enabled，
+	其他的都返回true
+	2⃣️新建登陆实体类 AdminLoginParam
+		添加lombok注解
+			@Data
+			@EqualsAndHashCode 此注解会生成equals(Object other) 和 hashCode()方法 callSuper是否调用父类中的方法
+			@Accessors(chain = true)，Accessors翻译是存取器。通过该注解可以控制getter和setter方法的形式chain为true，setter方法返回当前对象
+		  @ApiModel(value = "AdminLogin对对象",description = "" swagger注解
+		  @ApiModelProperty(value = "密码",required = true) swagger注解，required是否必填
+	3⃣️controller编写，LoginController
+		注解：
+			@Api(tags = "LoginController") 表示标识这个类是swagger的资源 
+			@RestController 等同于@Controller + @ResponseBody，表明了这个类是一个控制器类+表示方法的返回值直接以指定的格式写入Http response body
+      @ApiOperation(value = "登陆之后返回token")表示一个http请求的操作 
+       @PostMapping("/login") 映射一个POST请求 
+   4⃣️添加方法 login，参数 AdminLoginParam，HttpServletRequest
+      public RespBean login(AdminLoginParam adminLoginParam, HttpServletRequest request);
+   5⃣️引入IAdminService，并加入方法login，参数（用户名，密码，request）
+   6⃣️在IAminService里面实现login
+   7⃣️在AdminServiceImpl实现login
+   	 注入UserDetailsService
+   	 通过UserDetailsService，获得UserDetails
+   	 注入PasswordEncoder
+   	 利用PasswordEncoder 匹配一下密码
+   	 判断userDetails账户是否禁用
+   	 注入JWT工具类
+   	 生成token
+   	 注入tokenHead，jwt配置
+   	 将token装入map
+		 使用springsecurity框架，登陆成功后，获取用户信息可以使用springsecurity提供的对象userdetails等
+		 所以登录时，要将用户信息放入springsecurity全文中
+		 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+	8⃣️passwordEncoder对象等待处理
+```
+
+获取当前登录用户信息
+
+```
+登陆时将当前登录对象设制到springsecurity全局，所以可以利用Principal获取当前登录用户对象
+1⃣️在LoginController新建方法getAdminInfo
+2⃣️利用Principal获取用户对象
+3⃣️将获得admin对象密码置空，避免前端获取明文密码
+4⃣️在IAdminService定义getAdminByUserName
+5⃣️在AdminServiceImpl实现getAdminByUserName
+	注入AdminMapper
+	return adminMapper.selectOne(
+			newQueryWrapper<Admin()
+					   .eq("username",username)
+					   .eq("enabled", true)
+					   );
+
+```
+
+退出登录
+
+```
+后端返回200状态码，前端根据状态码，将请求头里面的token删除 
+1⃣️在LoginController里面 新建方法logout 返回状态码200
+```
+
+配置security登陆过滤器
+
+```
+1⃣️准备配置类SecurityConfig，继承 WebSecurityConfigurerAdapter
+2⃣️注解@Configuration
+3⃣️注入Bean UserDetailsService，重写这个容器里的
+		@Override
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            Admin admin = adminService.getAdminByUserName(username);
+            if (null != admin) {
+                return admin;
+            }
+            return null;
+        };
+    }
+4⃣️重写configure方法，能够将我们重写的UserDetyailsService 注入到springsecurit
+5⃣️实现passwordEncoder容器
+6⃣️重写springsecurity配置configure(HttpSecurity http)
+	关闭scrf，使用JWT不需要csrf
+	 http.csrf()
+        .disable()
+	关闭session相关的
+		基于token不需要session
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	允许登陆访问
+		.antMatchers("/login", "logout")
+	配置生效
+		.permitAll();
+	访问请求要求认证
+                .anyRequest()
+                .authenticated()
+   缓存关闭
+                .headers()
+                .cacheControl();
+   添加jwt登陆授权拦截器
+        http.addFilterBefore();
+   自定义未授权，或者未登录的结果返回
+        http.exceptionHandling()
+                .accessDeniedHandler()
+                .authenticationEntryPoint();
+7⃣️准备jwt的登陆过滤器 JwtAuthorizationTokenFilter 继承OncePerRequestFilter 重写doFilterInternal==相当于前置拦截
+	通过request获取Header
+	进行token校验
+		token是否存在，token是否以tokenHead为开头
+	利用JwtUtils获取用户名
+	进行用户名判断
+		判断用户名是否为空，同时检查springsecurity全局上下文找不到用户对象，即未登录
+	获取userdetails，相当于登陆了
+	判断token是否有效，有效就将token重新放入用户对象	
+		重新设置用户对象,更新荷载
+		重新设置用户对象，更新details
+		设置springsecurity全局上下文
+	经过一系列验证，最后进行放行
+8⃣️回到SecurityConfig类，利用Bean注解将JwtAuthorizationTokenFilter暴露出来
+	并填入【添加jwt登陆授权拦截器】同时加上参数，UsernamePasswordAuthenticationFilter.class
+```
+
+security自定义返回结果
+
+```
+1⃣️新建类RestAuthorizationEntryPoint，实现AuthenticationEntryPoint
+2⃣️通过response设置字符集
+3⃣️设置数据交流格式
+4⃣️获取输出流
+5⃣️自定义返回类型
+
+1⃣️新建类RestfulAccessDeniedHandler实现AccessDeniedHandler重写handle方法
+2⃣️通过response设置字符集
+3⃣️设置数据交流格式
+4⃣️获取输出流
+5⃣️自定义返回类型
+
+
+在SecurityConfig类中进行注入RestAuthorizationEntryPoint，RestfulAccessDeniedHandler
+将注入的两个类放入配置中
+
 ```
 
