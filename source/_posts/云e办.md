@@ -687,6 +687,77 @@ security自定义返回结果
 
 在SecurityConfig类中进行注入RestAuthorizationEntryPoint，RestfulAccessDeniedHandler
 将注入的两个类放入配置中
+```
 
+swagger2配资
+
+```
+1⃣️pom依赖
+	 <!--Swagger2 依赖-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <!--Swagger第三方UI依赖-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+            <version>1.9.6</version>
+        </dependency>
+ 2⃣️配置swagger，新建Swagger2Config类
+ 		注解
+ 		@Component 配置类
+		@EnableSwagger2 开启swagger2
+ 3⃣️准备APiInfo
+ 4⃣️注入bean，规定扫描那些包，具体什么包，任意路径	 	
+ 5⃣️启动测试，重写允许通过方法，添加通过资源
+ 	 public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(
+                "/login",
+                "/logout",
+                "/css/**",
+                "/js/**",
+                "/index.html",
+                "favicon.ico",
+                "/doc.html",
+                "/webjars/**",
+                "/swagger-resources/**",
+                "/v2/api-docs/**"
+        );
+    }
+```
+
+swagger2提供Authorize
+
+```
+实现全局登录
+1⃣️在swagger2config类createRestApi方法里面继续添加 
+																	.securityContexts()
+									                .securitySchemes();
+2⃣️完成securitySchemes
+	设置请求头信息
+		新建List
+		新建ApiKey，三个参数
+		将ApiKey加入List
+		返回List
+3⃣️完成securityContexts
+	设置登陆访问认证路径
+	result.add(getContextByPath("/hello/.*"));
+	默认权限
+	.securityReferences(defaultAuth())
+	指代路径
+	.forPaths(PathSelectors.regex(pathRegex))
+	默认权限
+		授权范围
+			AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+     	result.add(new SecurityReference("Authorization", authorizationScopes));
+4⃣️json传参
+更改LoginController/login 参数注解@RequestBody ，更改JwtTokenUtil/generatorToken/加密模式HS512
+5⃣️注意，SecurityConfig/configure（WebSecurity web）里面放行的配置与SecurityConfig/configure(HttpSecurity http)的放行配置重合，
+可以将SecurityConfig/configure(HttpSecurity http)的login放行配置进行注释
+	.antMatchers("/login", "/logout")
+  .permitAll()
+6⃣️进行Authorize设置，将Bearer空格tokon进行保存
 ```
 
