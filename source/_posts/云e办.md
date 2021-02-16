@@ -828,3 +828,16 @@ swagger2提供Authorize
 5⃣️接口文档验证码乱码-在注解添加 @GetMapping(value = "/captcha",produces = "image/jpeg")
 ```
 
+验证码校验
+
+```
+1⃣️在AdminLoginParam添加接收参数
+	@ApiModelProperty(value = "验证码",required = true)
+    private String code;
+2⃣️在LoginController，添加参数验证码，同时在IAdminService/AdminServiceImpl也进行改变
+3⃣️在AdminServiceImpl，获取验证码
+	String captcha = (String) request.getSession().getAttribute("captcha");
+4⃣️验证码比较
+	不为空前端输入与后端验证码进行匹配
+```
+
