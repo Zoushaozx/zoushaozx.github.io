@@ -761,3 +761,70 @@ swagger2提供Authorize
 6⃣️进行Authorize设置，将Bearer空格tokon进行保存
 ```
 
+生成验证码
+
+```
+1⃣️引入Google验证码依赖
+	 <!--验证码-->
+        <dependency>
+            <groupId>com.github.axet</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>0.0.9</version>
+        </dependency>
+2⃣️准备谷歌验证码配置类
+	注解@Configuration
+	准备bean
+	具体配置
+				//验证码生成器
+        DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
+        //配置
+        Properties properties = new Properties();
+        //是否有边框
+        properties.setProperty("kaptcha.border", "yes");
+        //设置边框颜色
+        properties.setProperty("kaptcha.border.color", "105,179,90");
+        //边框粗细度，默认为1
+        // properties.setProperty("kaptcha.border.thickness","1");
+        //验证码
+        properties.setProperty("kaptcha.session.key", "code");
+        //验证码文本字符颜色 默认为黑色
+        properties.setProperty("kaptcha.textproducer.font.color", "blue");
+        //设置字体样式
+        properties.setProperty("kaptcha.textproducer.font.names", "宋体,楷体,微软雅 黑");
+        //字体大小，默认40
+        properties.setProperty("kaptcha.textproducer.font.size", "30");
+        //验证码文本字符内容范围 默认为abced2345678gfynmnpwx
+        // properties.setProperty("kaptcha.textproducer.char.string", "");
+        //字符长度，默认为5
+        properties.setProperty("kaptcha.textproducer.char.length", "4");
+        //字符间距 默认为2
+        properties.setProperty("kaptcha.textproducer.char.space", "4");
+        //验证码图片宽度 默认为200
+        properties.setProperty("kaptcha.image.width", "100");
+        //验证码图片高度 默认为40
+        properties.setProperty("kaptcha.image.height", "40");
+        Config config = new Config(properties);
+        defaultKaptcha.setConfig(config);
+        return defaultKaptcha;
+3⃣️新建Controller
+	注解
+	类注解  @RestController
+	@ApiOperation(value = "验证码")
+  @GetMapping(value = "/captcha")
+  添加方法captcha参数为（HttpServletRequest，HttpServletResponse）
+  通过流传递图片到前端,需要对response响应头做相应处理
+  	response.setDateHeader("Expires", 0);
+    response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+    response.setHeader("Pragma", "no-cache");
+    response.setContentType("image/jpeg");
+  注入DefaultKaptcha
+  生成验证码
+  获取验证码文本内容
+  将验证码放入session
+  根据text创建图像验证码
+  输出流输出图片，格式为jpg
+4⃣️添加放行SecurityConfig/configure(WebSecurity web)+"/captcha"
+5⃣️接口文档验证码乱码-在注解添加 @GetMapping(value = "/captcha",produces = "image/jpeg")
+```
+
