@@ -900,3 +900,50 @@ swagger2提供Authorize
 
 ```
 
+Redis继承菜单功能
+
+```
+1⃣️添加依赖
+	<!--spring data redis 依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!--commons-pool2 对象池依赖-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+2⃣️添加配置application.yml 
+	redis:
+    #超时时间
+    timeout:  10000ms
+    #服务器地址
+    host: 47.100.92.101
+    #服务器端口
+    port: 6379
+    database: 0
+    #    password: root
+    lettuce:
+      #默认连接数，默认是8
+      max-active: 1024
+      #最大连接阻塞等待时间
+      max-wait: 1000ms
+      #最大空闲连接
+      max-idle: 200
+      #最小空闲连接
+      min-idle: 5
+3⃣️新建redis配置类RedisConfig 参数RedisConnectionFactory
+	引入Bean RedisTemplate
+	序列化
+	String类型序列器
+	 Hash类型序列器
+	 将RedisConnectionFactory 加入到RedisTemplate
+4⃣️更改Menucontroller->IMenuService->MenuServiceImpl/getMenusByAdminId方法
+	注入RedisTemplate
+	先去redis获取
+	判断menus是否为空,就通过数据库进行查询
+		将数据设置到redis中
+5⃣️后期，当涉及到数据菜单更新时，我们要重置redis里面的数据
+```
+
