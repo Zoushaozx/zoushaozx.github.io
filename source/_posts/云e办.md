@@ -841,3 +841,62 @@ swagger2提供Authorize
 	不为空前端输入与后端验证码进行匹配
 ```
 
+根据用户id查询菜单列表
+
+```
+1⃣️更改pojo实体类Menu
+	 @ApiModelProperty(value = "子菜单")
+   @TableField(exist = false)
+   private List<Menu> children;	
+2⃣️更改MenuController
+	更改路径/system/cfg
+	注入 IMenuService
+	在getMenuByAdminId返回getMenusByAdminId
+	用户信息一般是从后端获取，而不是前端获取，因为可能会被篡改
+3⃣️在IMenuService接口定义getMenusByAdminId
+4⃣️在MenuServiceImpl实现getMenusByAdminId
+	return menuMapper.getMenusAdminId(((Admin)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getId());
+5⃣️在MenuMapper定义getMenusAdminId
+6⃣️在MenuMapper写查询方法 定义返回类型
+	<!--根据用户id查询菜单列表-->
+	<select id="getMenusAdminId" resultMap="Menus">
+        select distinct m1.*,
+                        m2.id            as id2,
+                        m2.url           as url2,
+                        m2.path          as path2,
+                        m2.`component`   as component2,
+                        m2.name          as name2,
+                        m2.`iconCls`     as iconCls2,
+                        m2.`keepAlive`   as keepAlive2,
+                        m2.`requireAuth` as requireAuth2,
+                        m2.`parentId`    as parentId2,
+                        m2.enabled       as enabled2
+        from `t_menu` m1,
+             `t_menu` m2,
+             `t_menu_role` mr,
+             `t_admin_role` ar
+        where m1.id = m2.`parentId`
+          and m2.id = mr.`mid`
+          and mr.`rid` = ar.`rid`
+          and ar.`adminId` = #{id}
+          and m2.enabled = true
+        order by m2.id
+    </select>
+    
+    <resultMap id="Menus" type="com.zoux.server.pojo.Menu" extends="BaseResultMap">
+        <collection property="children" ofType="com.zoux.server.pojo.Menu">
+            <id column="id2" property="id"/>
+            <result column="url2" property="url"/>
+            <result column="path2" property="path"/>
+            <result column="component2" property="component"/>
+            <result column="name2" property="name"/>
+            <result column="iconCls2" property="iconCls"/>
+            <result column="keepAlive2" property="keepAlive"/>
+            <result column="requireAuth2" property="requireAuth"/>
+            <result column="parentId2" property="parentId"/>
+            <result column="enabled2" property="enabled"/>
+        </collection>
+    </resultMap>
+
+```
+
