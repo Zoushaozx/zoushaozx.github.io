@@ -900,7 +900,7 @@ swagger2提供Authorize
 
 ```
 
-Redis继承菜单功能
+Redis集成菜单功能
 
 ```
 1⃣️添加依赖
@@ -945,5 +945,36 @@ Redis继承菜单功能
 	判断menus是否为空,就通过数据库进行查询
 		将数据设置到redis中
 5⃣️后期，当涉及到数据菜单更新时，我们要重置redis里面的数据
+```
+
+根据请求url判断角色
+
+```
+权限RBAC基本概念
+	Role- Based Access Controller
+	权限与角色相关联，用户通过扮演适当的角色从而得到这些角色的权限。
+	管理是层级相互依赖的，权限赋予给角色，角色又赋予用户。
+	权限设计清楚，管理方便
+	RBAC实际上是who what how三元组之间的关系，也就是who 对what进行how的操作
+	谁对什么资源做了怎样的操作。
+	
+1⃣️pojo-Menu添加属性
+		@ApiModelProperty(value = "角色列表")
+    @TableField(exist = false)
+    private List<Menu> roles;
+2⃣️在IMenuService定义getMenusWithRole
+3⃣️在MenuServiceImpl实现getMenusWithRole
+4⃣️在MenuMapper定义getMenusWithRole
+5⃣️在MenuMapper.xml实现sql
+	并实现返回map
+6⃣️将实现的getMenusWithRole放入过滤器中
+	顺便更新config目录结构，重启项目，验证是否出现错误
+7⃣️	新建CustomFilter配置类
+	注解@Component
+	实现FilterInvocationSecurityMetadataSource重写内部方法 getAttributes
+	注入IMenuService
+	引入AntPathMatcher
+		在做uri匹配规则发现这个类，根据源码对该类进行分析，它主要用来做类URLs字符串匹配；
+			
 ```
 
