@@ -1051,7 +1051,7 @@ Redis集成菜单功能
 2⃣️更改PositionController
 	查询
     @ApiOperation(value = "获取所有职位信息")
-    注解@RequestMapping("/system/cfg/pos")		
+    注解@RequestMapping("/system/basic/pos")		
     注入IPositionService
     创建方法getAllPositions
       返回return positionService.list();
@@ -1077,5 +1077,15 @@ Redis集成菜单功能
 	捕捉异常
     @ExceptionHandler
   
+```
+
+职称管理功能实现
+
+```
+1⃣️给pojo-Joblevel类的属性createDate加上注解
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+2⃣️修改JoblevelController注解@RequestMapping的路径与数据库相匹配
+	@RequestMapping("/system/basic/joblevel")
+	与职位管理功能类似
 ```
 
