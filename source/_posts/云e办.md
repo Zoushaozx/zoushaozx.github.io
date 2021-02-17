@@ -1139,5 +1139,44 @@ Redis集成菜单功能
               </insert>
 ```
 
+存储过程的创建和使用
 
+```
+存储过程就是具有名字的一段代码，用来完成一个特定的功能
+创建的存储过程保存在数据库的数据字典中
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteDep`(in did int,out result int)
+begin
+  declare ecount int;
+  declare pid int;
+  declare pcount int;
+  declare a int;
+  select count(*) into a from t_department where id=did and isParent=false;
+  if a=0 then set result=-2;
+  else
+  select count(*) into ecount from t_employee where departmentId=did;
+  if ecount>0 then set result=-1;
+  else 
+  select parentId into pid from t_department where id=did;
+  delete from t_department where id=did and isParent=false;
+  select row_count() into result;
+  select count(*) into pcount from t_department where parentId=pid;
+  if pcount=0 then update t_department set isParent=false where id=pid;
+  end if;
+  end if;
+  end if;
+end
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addDep`(in depName varchar(32),in parentId int,in enabled boolean,out result int,out result2 int)
+begin
+  declare did int;
+  declare pDepPath varchar(64);
+  insert into t_department set name=depName,parentId=parentId,enabled=enabled;
+  select row_count() into result;
+  select last_insert_id() into did;
+  set result2=did;
+  select depPath into pDepPath from t_department where id=parentId;
+  update t_department set depPath=concat(pDepPath,'.',did) where id=did;
+  update t_department set isParent=true where id=parentId;
+end
+```
 
