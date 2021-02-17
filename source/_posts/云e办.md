@@ -1041,3 +1041,31 @@ Redis集成菜单功能
     }
 ```
 
+职位管理功能实现
+
+```
+1⃣️自定义日期格式
+	pojo-Position
+	添加注解
+		@JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+2⃣️更改PositionController
+	查询
+    @ApiOperation(value = "获取所有职位信息")
+    注解@RequestMapping("/system/cfg/pos")		
+    注入IPositionService
+    创建方法getAllPositions
+      返回return positionService.list();
+  添加
+  	方法入参注解@RequestBody 接收前端传递给后端的json字符串中的数据的
+  	加入当前时间
+  		position.setCreateDate(LocalDateTime.now());
+  	positionService.save(position)
+  更新
+  	positionService.updateById(position)
+  删除
+  	注解@PathVariable 接收请求路径中占位符的值
+  	positionService.removeById(id)
+  批量删除
+  	positionService.removeByIds(Arrays.asList(ids))
+```
+
