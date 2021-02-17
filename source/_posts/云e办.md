@@ -975,6 +975,69 @@ Redis集成菜单功能
 	注入IMenuService
 	引入AntPathMatcher
 		在做uri匹配规则发现这个类，根据源码对该类进行分析，它主要用来做类URLs字符串匹配；
-			
+		获取请求的url
+		获得menus
+		循环判断 我们当前的url与获取的url是否匹配
+		判断请求url与角色允许url是否匹配
+		利用jdk8新特性stream流map一下
+		能够匹配就将匹配的角色放入/list
+		如果url匹配不上就默认给一个登陆角色
+```
+
+判断用户角色
+
+```
+1⃣️修改pojo-Admin
+		@ApiModelProperty(value = "角色")
+    @TableField(exist = false)
+    private List<Role> roles;
+    更改getAuthorities
+    	获取权限列表
+2⃣️IAdminService定义getRoles
+3⃣️在AdminServiceImpl实现getRoles
+	注入RoleMapper
+	新建方法getRoles
+4⃣️在RoleMapper定义getRoles
+5⃣️在RoleMapper.xml中实现sql
+7⃣️在登录方法中加入getRoles
+	在LoginController-getAdminInfo/loadUserByUsername实现方法
+		添加获取用户角色    
+8⃣️添加拦截
+	新建类CustomUrlDecisionManager
+		注解@Component
+		实现AccessDecisionManager，并重写其方法decide
+			获取当前url需要角色
+			判断角色是否登陆即可访问的角色，此角色在CustomFilter中设置
+			判断是否登陆
+			判断用户角色是否为url所需角色
+			如若不满足，抛出异常
+				throw new AccessDeniedException("权限不足，请联系管理员！");
+9⃣️配置securityconfig
+	引入CustomFilter，CustomUrlDecisionManager
+	在访问请求要求认证下添加
+		动态权限配置
+		.withObjectPostProcessor()
+			new ObjectPostProcessor范型为FilterSecurityInterceptor重写其方法postProcess
+				添加CustomFilter，CustomUrlDecisionManager
+					o.setAccessDecisionManager(customUrlDecisionManager);
+          o.setSecurityMetadataSource(customFilter);
+        返回o
+🔟准备测试类
+	HelloController
+	注解@RestController
+		@GetMapping("/employee/basic/hello")
+    public String hello2() {
+        return "/employee/basic/hell";
+    }
+
+    @GetMapping("hello")
+    public String hello() {
+        return "hello";
+    }
+
+    @GetMapping("/employee/advanced/hello")
+    public String hello3() {
+        return "/employee/advanced/hello";
+    }
 ```
 
