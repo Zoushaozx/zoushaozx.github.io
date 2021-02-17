@@ -1144,39 +1144,134 @@ Redis集成菜单功能
 ```
 存储过程就是具有名字的一段代码，用来完成一个特定的功能
 创建的存储过程保存在数据库的数据字典中
+
+//定义了用户root，使用本地IP地址			创建了存储过程名字为deleteDep
 CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteDep`(in did int,out result int)
 begin
   declare ecount int;
   declare pid int;
   declare pcount int;
   declare a int;
+  //不存在id，或者有子部门
   select count(*) into a from t_department where id=did and isParent=false;
   if a=0 then set result=-2;
   else
+  //查询部门下员工数量
   select count(*) into ecount from t_employee where departmentId=did;
   if ecount>0 then set result=-1;
+  //有员工不能进行删除
   else 
+  //查询 父id
   select parentId into pid from t_department where id=did;
+  //正式删除
   delete from t_department where id=did and isParent=false;
+  //获得受影响行数
   select row_count() into result;
+  //查询部门的父部门
   select count(*) into pcount from t_department where parentId=pid;
+  //判断当子部门为0时，就改变字段isParent。
   if pcount=0 then update t_department set isParent=false where id=pid;
   end if;
   end if;
   end if;
 end
-
+//定义了用户root，使用本地IP地址      创建了存储过程名字为addDep 参数 in表输入参数 depName表输入参数名称 out输出参数
 CREATE DEFINER=`root`@`localhost` PROCEDURE `addDep`(in depName varchar(32),in parentId int,in enabled boolean,out result int,out result2 int)
 begin
+//定义了did int类型的
   declare did int;
   declare pDepPath varchar(64);
+  //插入数据
   insert into t_department set name=depName,parentId=parentId,enabled=enabled;
+  //获取受影响的行数
   select row_count() into result;
+  //获取插入的最后一条的id
   select last_insert_id() into did;
   set result2=did;
+  //查询路径 放入到pDepPath里面
   select depPath into pDepPath from t_department where id=parentId;
+  /在原有的路径的基础上加上上一次插入的路径
   update t_department set depPath=concat(pDepPath,'.',did) where id=did;
+  //经过上一句，这条数据库记录本身就上升为有子部门的记录了
   update t_department set isParent=true where id=parentId;
 end
+```
+
+部门管理功能实现
+
+```
+1⃣️获取所有部门
+	更改DepartmentController
+		注解RequestMapping路径/system/basic/department
+		注入IDepartmentService
+		定义方法getAllDepartments
+			注解
+				@ApiOperation(value = "获取所有部门")
+		    @GetMapping("/")
+	在pojo-Department中
+    	定义属性
+    		@ApiModelProperty(value = "子部门列表")
+        @TableField(exist = false)
+        private List<Department> children;
+        @ApiModelProperty(value = "返回结果，存储过程使用")
+        @TableField(exist = false)
+        private Integer result;
+  在IDepartmentService定义getAllDepartments
+  在DepartmentServiceImpl实现getAllDepartments
+  	注入departmentMapper
+  在DepartmentMapper定义getAllDepartments
+  在DepartmentMapper.xml实现sql
+  	利用mybatis提供的递归查询实现
+  		在DepartmentServiceImpl的getAllDepartments方法提供入参（最大的parentid）
+  		递归体现在DepartmentMapper.xml编写resultMap时
+  			<resultMap id="DepartmentWithChildren" type="com.zoux.server.pojo.Department" extends="BaseResultMap">
+        <collection property="children" ofType="com.zoux.server.pojo.Department"
+                    select="com.zoux.server.mapper.DepartmentMapper.getAllDepartments" column="id">
+        </collection>
+    </resultMap>
+    	其中select="com.zoux.server.mapper.DepartmentMapper.getAllDepartments" column="id">
+    	为入口
+2⃣️添加部门
+	修改DepartmentController
+		注解
+			@ApiOperation(value = "添加部门")
+    	@PostMapping("/")
+    新建方法addDep
+    在IDepartmentService定义addDep
+    在DepartmentServiceImpl实现addDep
+	    更改即将存储的department
+	    	enabled=true
+	    判断添加是否成功
+    在DepartmentMapper定义addDep
+    在DepartmentMapper.xml里面实现sql
+    	不使用传统insert
+    	使用存储过程
+    		<!--    添加部门  -->
+        <select id="addDep" statementType="CALLABLE">
+            call addDep(#{name,mode = IN,jdbcType=VARCHAR},
+                #{parentId,mode = IN,jdbcType=INTEGER},
+                #{enabled,mode = IN,jdbcType=BOOLEAN},
+                #{result,mode = OUT,jdbcType=INTEGER},
+                #{id,mode = OUT,jdbcType=INTEGER})
+        </select>
+3⃣️删除部门 
+	修改DepartmentController
+		注解
+			@ApiOperation(value = "删除部门")
+   	  @DeleteMapping("/{id}")
+   	新建方法deleteDep  
+   	在IDepartmentService定义deleteDep
+    在DepartmentServiceImpl实现deleteDep
+    	判断删除是否成功
+    在DepartmentMapper定义addDep
+    在DepartmentMapper.xml里面实现sql
+    	不使用传统insert
+    	使用存储过程
+      	<!--    删除部门  -->
+        <select id="deleteDep" statementType="CALLABLE">
+            call deleteDep( #{id,mode = IN,jdbcType=INTEGER},
+                #{result,mode = OUT,jdbcType=INTEGER}
+                )
+        </select>
 ```
 
