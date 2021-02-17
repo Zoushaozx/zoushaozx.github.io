@@ -1089,3 +1089,55 @@ Redis集成菜单功能
 	与职位管理功能类似
 ```
 
+权限组角色功能实现
+
+```
+通过角色表和用户表管关联，进而给用户分配不同的角色
+也可以通过菜单角色也菜单表关联，进而给用户分配不同的角色，可以拥有不同菜单的权限
+权限组分为角色和菜单部分
+1⃣️新建PermissionController
+  	添加注解
+  		@RestController
+			@RequestMapping("/system/basic/permission")
+		注入IRoleService
+		注入IMenuService
+    实现角色部分
+    	查询角色
+    	添加角色
+    		给名字加上前缀
+    	删除角色
+    实现菜单部分
+    	查询所有菜单
+    		在IMenuService中定义getAllMenus方法
+    		在MenuServiceImpl中实现getAllMenus方法
+    		在MenuMapper定义getAllMenus方法
+    		在MenuMapper.xml实现sql 编写resultMap
+    	根据角色id查询菜单id
+      	@ApiOperation(value = "根据角色id查询菜单id")
+    		@GetMapping("/mid/{rid}")
+    		public List<Integer> getMidByRid(@PathVariable Integer rid) {
+           return menuRoleService.list(new QueryWrapper<MenuRole>().eq("rid", rid)).stream().map(MenuRole::getMid).collect(Collectors.toList());
+        }
+    更新角色菜单
+       流程：
+       	每次更新之前，将这个角色的菜单清空
+       	然后根据传入的角色id与菜单id进行关联
+				涉及到了两步加上注解@Transactional 事物注解
+        	注入mapper
+        	删除角色下所有菜单	
+        		menuRoleMapper.delete(new QueryWrapper<MenuRole>().eq("rid", rid));
+        	批量更新菜单
+        		insertRecord
+        		在menuRoleMapper下定义insertRecord 注意在入参加上注解@Param
+						在mapper实现sql
+							<!--  更新角色菜单  -->
+              <insert id="insertRecord">
+                  insert into t_menu_role(mid,rid) values
+                  <foreach collection="mids" item="mid" separator=",">
+                      (#{mid},#{rid})
+                  </foreach>
+              </insert>
+```
+
+
+
