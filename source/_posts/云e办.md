@@ -1069,3 +1069,13 @@ Redis集成菜单功能
   	positionService.removeByIds(Arrays.asList(ids))
 ```
 
+全局异常
+
+```
+1⃣️新建包exception并新建类GlobalException
+	注解@RestControllerAdvice 表示控制器的一个增强类
+	捕捉异常
+    @ExceptionHandler
+  
+```
+
