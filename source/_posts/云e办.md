@@ -1550,3 +1550,139 @@ end
         return RespBean.error("删除失败");
 ```
 
+员工数据导入导出
+
+```
+1⃣️引入easy poi依赖
+	 <!--   easy poi依赖     -->
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-spring-boot-starter</artifactId>
+            <version>4.1.3</version>
+        </dependency>
+2⃣️pojo-Employee加上easypoi注解
+		@ApiModelProperty(value = "性别")
+		@Excel(name = "性别")
+    private String gender;
+    with长度 format格式化
+   		@Excel(name = "出生日期", width = 30, format = "yyyy-MM-dd")
+ 		跨实体类注解
+ 			@ApiModelProperty(value = "职位")
+      @TableField(exist = false)
+      @ExcelEntity(name = "职位")
+      private Position position;
+      	进入到具体实体类加注解
+      		  @ApiModelProperty(value = "职位")
+            @Excel(name = "职位")
+            private String name;
+3⃣️导出数据
+	在EmployeeController新建exportEmployee方法
+		注解
+    	@ApiOperation(value = "导出员工数据")
+    	@GetMapping(value = "/export",produces = "application/octet-stream")
+		参数
+			HttpServletResponse response
+		注入
+			employeeService
+				新建方法getEmployee
+					将查询的数据存入List
+					ExportParams params = new ExportParams("员工表", "员工表", ExcelType.HSSF);
+        	Workbook workbook = ExcelExportUtil.exportExcel(params, Employee.class, list);
+        	输出流
+        		ServletOutputStream out = null;
+        		//以流的形式传输
+            response.setHeader("content-type", "application/octet-stream");
+            //防止中文乱码
+            response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode("员工表.xls", "UTF-8"));
+            out=response.getOutputStream();
+            workbook.write(out);
+            
+		在IEmployeeService定义	getEmployee
+    在EmployeeServiceImpl实现 getEmployee
+    	注入employeeMapper
+    在EmployeeMapper 定义	getEmployee
+    在EmployeeMapper.xml实现sql，编写resultMap
+    	<!--    导出员工数据-->
+   	 <select id="getEmployee" resultMap="EmployeeInfo">
+        SELECT e.*,
+        n.id AS nid,
+        n.`name` AS nname,
+        p.id AS pid,
+        p.`name` AS pname,
+        d.id AS did,
+        d.`name` AS dname,
+        j.id AS jid,
+        j.`name` AS jname,
+        pos.id AS posid,
+        pos.`name` AS posname
+        FROM t_employee e,
+        t_nation n,
+        t_politics_status p,
+        t_department d,
+        t_joblevel j,
+        t_position pos
+        WHERE e.nationId = n.id
+        AND e.politicId = p.id
+        AND e.departmentId = d.id
+        AND e.jobLevelId = j.id
+        AND e.posId = pos.id
+        <if test="null!=id">
+            AND e.id = #{id}
+        </if>
+        ORDER BY e.id
+    	</select>
+    	
+    	<resultMap id="EmployeeInfo" type="com.zoux.server.pojo.Employee" extends="BaseResultMap">
+        <association property="nation" javaType="com.zoux.server.pojo.Nation">
+            <id column="nid" property="id"/>
+            <result column="nname" property="name"/>
+        </association>
+        <association property="politicsStatus" javaType="com.zoux.server.pojo.PoliticsStatus">
+            <id column="pid" property="id"/>
+            <result column="pname" property="name"/>
+        </association>
+        <association property="department" javaType="com.zoux.server.pojo.Department">
+            <id column="did" property="id"/>
+            <result column="dname" property="name"/>
+        </association>
+        <association property="joblevel" javaType="com.zoux.server.pojo.Joblevel">
+            <id column="jid" property="id"/>
+            <result column="jname" property="name"/>
+        </association>
+        <association property="position" javaType="com.zoux.server.pojo.Position">
+            <id column="posid" property="id"/>
+            <result column="posname" property="name"/>
+        </association>
+    	</resultMap>
+3⃣️导入数据    	
+	修改pojo类 Nation PoliticsStatus Department Joblevel Position
+		修改@EqualsAndHashCode(callSuper = false,of = "name")
+			重写关于name的equals和hashcode方法
+		加入@NoArgsConstructor
+		加入@RequiredArgsConstructor
+		在属性name加上非空注解@NonNull
+	在EmployeeController类里面新建importEmployee方法
+  	注解
+  		 @ApiOperation(value = "导入员工数据")
+   		 @PostMapping("/import")
+   	入参
+    	MultipartFile file
+    准备即将名字转id集合
+   	 List<Nation> nationList = nationService.list();
+   	导入参数
+    	ImportParams params = new ImportParams();
+    去掉标题行
+    	params.setTitleRows(1);
+    excel import 工具类 	
+    	List<Employee> list = ExcelImportUtil.importExcel(file.getInputStream(), Employee.class, params);
+    将子表名称转换为id
+    	list.forEach(employee -> {
+    		名族id
+     		employee.setNationId(nationList.get(nationList.indexOf(new Nation(employee.getNation().getName()))).getId());
+    	});
+    保存数据集合
+    	employeeService.saveBatch(list)
+```
+
+
+
