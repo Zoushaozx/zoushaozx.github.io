@@ -1363,3 +1363,139 @@ end
     </update>	
 ```
 
+员工管理功能
+
+```
+1⃣️分页配置
+	新建配置类MybatisPlusConfig
+		注解@Configuration
+		注入
+			@Bean
+			PaginationInterceptor
+	新建公共分页返回对象pojo-RespPageBean
+  	注解
+  		@Data
+			@NoArgsConstructor
+			@AllArgsConstructor
+			
+		定义属性
+    	 Long total	总条数
+    	 List<?> data	数据list
+2⃣️全局时间格式转换类DateConverter
+		注解
+			@Component
+		实现Converter<String, LocalDate>
+			重写convert
+				return LocalDate.parse(source, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		给pojo-Employee于时间相关的属性加上注解，以便用于前端访问
+			@JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+3⃣️将外接表在pojo-Employee体现
+		@ApiModelProperty(value = "民族")
+    @TableField(exist = false)
+    private Nation nation;
+4⃣️获取员工分页查询
+	修改EmployeeController
+		根据t_menu确定注解@RequestMapping("/employee/basic")路径
+		新建方法getEmployee
+			注解
+			 @ApiOperation(value = "获取所有员工（分页）")
+	     @GetMapping("/")
+			参数
+				@RequestParam(defaultValue = "1") Integer currentPage,
+        @RequestParam(defaultValue = "10") Integer size,
+        Employee employee,
+        LocalDate[] beginDateScope
+      注入employeeEcService，添加方法getEmployeeByPage
+      	参数(currentPage, size, employee, beginDateScope)
+      在IEmployeeEcService定义getEmployeeByPage
+      在EmployeeEcServiceImpl实现getEmployeeByPage
+      	开启分页 page/com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+      	Page<EmployeeEc> page = new Page<>(currentPage, size);
+      	注入employeeMapper，
+      		在employeeMapper定义getEmployeeByPage
+      		参数(page, employee, beginDateScope)
+      	将查询结果设置到IPage
+      	通过RespPageBean将IPage拆解返回
+      		RespPageBean respPageBean = new RespPageBean(employeeByPage.getTotal(), 							employeeByPage.getRecords());
+      在EmployeeMapper定义getEmployeeByPage
+      在EmployeeMapper.xml实现sql，编写resultMap
+      	 <!--    获取所有员工(分页)-->
+        <select id="getEmployeeByPage" resultMap="EmployeeInfo">
+            SELECT
+            e.*,
+            n.id AS nid,
+            n.`name` AS nname,
+            p.id AS pid,
+            p.`name` AS pname,
+            d.id AS did,
+            d.`name` AS dname,
+            j.id AS jid,
+            j.`name` AS jname,
+            pos.id AS posid,
+            pos.`name` AS posname
+            FROM
+            t_employee e,
+            t_nation n,
+            t_politics_status p,
+            t_department d,
+            t_joblevel j,
+            t_position pos
+            WHERE
+            e.nationId = n.id
+            AND e.politicId = p.id
+            AND e.departmentId = d.id
+            AND e.jobLevelId = j.id
+            AND e.posId = pos.id
+            <if test="null!=employee.name and ''!=employee.name">
+                AND e.`name` LIKE concat( '%', #{employee.name}, '%' )
+            </if>
+            <if test="null!=employee.politicId ">
+                AND e.politicId =#{employee.politicId}
+            </if>
+            <if test="null!=employee.nationId ">
+                AND e.nationId =#{mployee.nationId}
+            </if>
+            <if test="null!=employee.jobLevelId ">
+                AND e.jobLevelId =#{mployee.jobLevelId}
+            </if>
+            <if test="null!=employee.posId ">
+                AND e.posId =#{mployee.posId}
+            </if>
+            <if test="null!=employee.engageForm and ''!=employee.engageForm">
+                AND e.engageForm =#{mployee.engageForm}
+            </if>
+            <if test="null!=employee.departmentId ">
+                AND e.departmentId =#{mployee.departmentId}
+            </if>
+            <if test="null!=beginDateScope and 2==beginDateScope.length">
+            AND e.beginDate BETWEEN
+            #{beginDateScope[0]} AND #{beginDateScope[1]}
+       		  </if>
+            ORDER BY
+            e.id
+         </select>
+					
+					<resultMap id="EmployeeInfo" type="com.zoux.server.pojo.Employee" extends="BaseResultMap">
+            <association property="nation" javaType="com.zoux.server.pojo.Nation">
+                <id column="nid" property="id"/>
+                <result column="nname" property="name"/>
+            </association>
+            <association property="politicsStatus" javaType="com.zoux.server.pojo.PoliticsStatus">
+                <id column="pid" property="id"/>
+                <result column="pname" property="name"/>
+            </association>
+            <association property="department" javaType="com.zoux.server.pojo.Department">
+                <id column="did" property="id"/>
+                <result column="dname" property="name"/>
+            </association>
+            <association property="joblevel" javaType="com.zoux.server.pojo.Joblevel">
+                <id column="jid" property="id"/>
+                <result column="jname" property="name"/>
+            </association>
+            <association property="position" javaType="com.zoux.server.pojo.Position">
+                <id column="posid" property="id"/>
+                <result column="posname" property="name"/>
+            </association>
+        </resultMap>
+```
+
