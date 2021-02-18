@@ -1275,3 +1275,91 @@ end
         </select>
 ```
 
+操作员管理功能
+
+```
+1⃣️获取所有操作员
+	修改AdminController
+		注解
+      @RequestMapping("/system/admin")
+      @GetMapping("/")
+		注入adminService
+		新建方法getAllAdmins参数keyword
+		在IAdminService定义getAllAdmins方法
+		在AdminServiceImpl实现getAllAdmins
+		在AdminMapper定义getAllAdmins
+		在AdminMapper.xml实现sql 编写resultMap
+			<select id="getAllAdmins" resultMap="AdminWithRole">
+        select
+        a.*,
+        r.id as rid,
+        r.name as rname,
+        r.nameZh as rnameZh
+        from t_admin a
+        LEFT JOIN
+        t_admin_role ar ON a.id = ar.adminId
+        LEFT JOIN
+        t_role r ON r.id = ar.rid
+        where a.id !=#{id}
+
+        <if test="null!=keyword and ''!=keyword">
+            and a.name   like CONCAT('%',#{keyword},'%')
+        </if>
+        ORDER BY
+        a.id
+    	</select>
+    	<resultMap id="AdminWithRole" type="com.zoux.server.pojo.Admin" extends="BaseResultMap">
+        <collection property="roles" ofType="com.zoux.server.pojo.Role">
+            <id column="rid" property="id"/>
+            <result column="rname" property="name"/>
+            <result column="rnameZh" property="nameZh"/>
+        </collection>
+    </resultMap>
+2⃣️更新操作员
+	AdminController新建方法updateAdmin
+		注解
+			ApiOperation(value = "更新操作员")
+   	  PutMapping("/")
+   	  RequestBody
+   	调用adminService.updateById（admin ）
+    更改pojo-Admin	指定属性enabled，lombok注解@Getter(AccessLevel.NONE)
+    	因为实现了UserDetails，所以有关enabled的get方法被重写，使用get方法时就会出现错误，关闭lombok，		get方法
+3⃣️删除操作员
+	在AdminController新建方法deleteAdmin
+	注解
+		@ApiOperation(value = "删除操作员")
+    @DeleteMapping("/{id}")
+    @PathVariable
+  注入adminService
+  	调用removeById(id)  
+4⃣️获取所有角色
+	在AdminController新建方法getAllRoles
+	注解
+		@ApiOperation(value = "获取所有角色")
+    @GetMapping("/roles")
+  注入roleService
+  	调用list（）
+5⃣️更新操作员角色
+	在AdminController新建方法updateAdminOfRole
+	注解：
+		@ApiOperation(value = "更新操作员角色")
+    @PutMapping("/role")
+  注入adminService
+  	调用updateAdminOfRole(adminId, rids)
+  在AdminServiceImpl
+  	注入adminRoleMapper
+  		调用delete，根据adminId删除角色
+  			delete(new QueryWrapper<AdminRole>().eq("adminId", adminId))
+  		新建addAdminOfRole
+  	判断addAdminOfRole方法返回结果
+  在AdminRoleMapper定义addAdminOfRole方法
+  在AdminRoleMapper.xml实现sql
+  	<!--    更新操作员角色-->
+    <update id="addAdminOfRole">
+        insert into t_admin_role(adminId,rid) values
+        <foreach collection="rids" item="rid" separator=",">
+            (#{adminId},#{rid})
+        </foreach>
+    </update>	
+```
+
