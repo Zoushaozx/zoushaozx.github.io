@@ -1363,7 +1363,7 @@ end
     </update>	
 ```
 
-员工管理功能
+员工管理功能-分页
 
 ```
 1⃣️分页配置
@@ -1497,5 +1497,56 @@ end
                 <result column="posname" property="name"/>
             </association>
         </resultMap>
+```
+
+员工管理功能-添加/删除/更新员工
+
+```
+1⃣️获取所有政治面貌
+2⃣️获取所有职称
+3⃣️获取所有民族
+4⃣️获取所有职位
+5⃣️获取所有部门
+前六步步骤一摸一样
+	在EmployeeController编辑
+    注入departmentService
+    @ApiOperation(value = "获取所有部门")
+      @GetMapping("/department")
+      public List<Department> getAllDepartment() {
+          return departmentService.getAllDepartments();
+      }
+6⃣️获取工号
+	在EmployeeController新建maxWorkId
+	注入employeeEcService
+	在IEmployeeEcService定义maxWorkId
+	在EmployeeEcServiceImpl实现maxWorkId
+		注入employeeMapper
+    	查询sql	
+    		employeeMapper.selectMaps(new QueryWrapper<Employee>().select("max(workId)"))
+    返回格式化后的数据
+    	String.format("%08d", Integer.parseInt(maps.get(0).get("max(workId)").toString()) + 1)
+7⃣️添加员工
+	在EmployeeController新建addEmp
+	注入employeeEcService
+	在IEmployeeEcService定义addEmp
+	在EmployeeEcServiceImpl实现addEmp
+		计算合同期限计算,保留2位小数
+	注入employeeMapper
+  	调用nsert(employee)
+  返回提示	
+8⃣️更新员工
+	在EmployeeController新建updateEmp
+	注解RequestBody
+		if (employeeEcService.updateById(employee)) {
+            return RespBean.success("更新成功");
+        }
+        return RespBean.error("更新失败");
+9⃣️删除员工
+	在EmployeeController新建deleteEmp
+		注解PathVariable
+	 if (employeeEcService.removeById(id)) {
+            return RespBean.success("删除成功");
+        }
+        return RespBean.error("删除失败");
 ```
 
