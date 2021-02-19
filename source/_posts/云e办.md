@@ -1806,3 +1806,110 @@ end
 	消费者怎么做幂等性保证，一条消息重复多发，只消费一条消息	
 ```
 
+---
+
+## 开启消息回调机制
+
+```
+1⃣️新建pojo类MailConstants
+	定义常量
+2⃣️修改EmployeeServiceImpl/addEmp
+	注入mailLogMapper
+	在发送消息之间加入消息回调
+	数据库记录发送的消息
+  	MailLog
+  发送信息
+  rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME,
+                    MailConstants.MAIL_ROUTING_KEY_NAME,
+                    emp,
+                    new CorrelationData(msgId));
+3⃣️更改MailApplication
+  	return new Queue(MailConstants.MAIL_QUEUE_NAME);
+4⃣️更改MailReceiver
+ 		@RabbitListener(queues = MailConstants.MAIL_QUEUE_NAME)监听
+5⃣️添加rabbitMQ配置类 RabbitMQConfig
+	注入
+    cachingConnectionFactory
+    mailLogService
+	定义常量
+		public static final Logger logger = LoggerFactory.getLogger(RabbitMQConfig.class);	
+	引入Bean
+    Binding
+    DirectExchange
+    Queue	
+    RabbitTemplate
+6⃣️添加application.xml配置
+	 rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+    # 消息失败回调
+    publisher-returns: true
+    # 消息确认回调
+    publisher-confirm-type: correlated
+```
+
+注入Bean详情
+
+```java
+	 @Bean
+    public Queue queue() {
+        return new Queue(MailConstants.MAIL_QUEUE_NAME);
+    }
+```
+
+```java
+@Bean
+    public DirectExchange directExchange() {
+        return new DirectExchange(MailConstants.MAIL_EXCHANGE_NAME);
+    }
+```
+
+```java
+@Bean
+    public Binding binding(){
+        return BindingBuilder.bind(queue()).to(directExchange()).with(MailConstants.MAIL_ROUTING_KEY_NAME);
+    }
+```
+
+```java
+@Bean
+    public RabbitTemplate rabbitTemplate(){
+        RabbitTemplate rabbitTemplate = new  RabbitTemplate(cachingConnectionFactory);
+        /**
+         * 消息确认回调,确认消息是否到达broker
+         * data:消息唯一标识
+         * ack：确认结果
+         * cause：失败原因
+         */
+        rabbitTemplate.setConfirmCallback((data,ack,cause)->{
+            String msgId = data.getId();
+            System.out.println("RabbitMQConfig: msgId = " + msgId);
+            if (ack){
+                logger.info("{}==========>消息发送成功",msgId);
+                //更数据库数据状态
+                mailLogService.update(new UpdateWrapper<MailLog>().set("status",1).eq("msgId",msgId));
+            }else {
+                logger.error("{}==========>消息发送失败",msgId);
+            }
+        });
+        /**
+         * 消息失败回调，比如router不到queue时回调
+         * msg:消息主题
+         * repCode:响应码
+         * repText:响应描述
+         * exchange:交换机
+         * routingKey:路由键
+         */
+        rabbitTemplate.setReturnCallback((msg,repCode,repText,exchange,routingKey)->{
+            logger.error("{}=======================>消息发送到queue时失败",msg.getBody());
+        });
+        return rabbitTemplate;
+    }
+```
+
+
+
+---
+
