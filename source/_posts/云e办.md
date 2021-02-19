@@ -1792,3 +1792,17 @@ end
 	@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 ```
 
+生产端可靠投递方案介绍
+
+```
+解偶
+异步
+流量区分
+考虑消息的可靠性
+	保证生产端消息的可靠性投递，是否真真切切的投递到了队列或者给消费者消费了
+	 保证消息的成功发出 
+	 rabbitmq队列成功的接收到消息
+	 发送端能够获得rabbitmq确认应答
+	消费者怎么做幂等性保证，一条消息重复多发，只消费一条消息	
+```
+
