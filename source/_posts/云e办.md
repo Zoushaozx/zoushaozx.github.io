@@ -1684,5 +1684,111 @@ end
     	employeeService.saveBatch(list)
 ```
 
+邮件功能
 
+```
+1⃣️开启邮箱SMTP服务
+	以qq邮箱为例
+		网页登陆->账户->POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务->开启SMTP服务
+2⃣️新建module
+	maven-quickstart
+		pom修改
+			关联sever
+				<parent>
+          <groupId>com.zoux</groupId>
+          <artifactId>yeb-server</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+    		</parent>
+    	sourceEncoding-UTF-8
+      source-1.8
+      target-1.8
+      rabbitmq 依赖
+      mail依赖
+      thymeleaf 依赖 
+      server依赖
+3⃣️新建配置文件resources/config/appicatioon.xml
+	端口配置
+	邮件配置
+	rabbitmq配置
+4⃣️添加启动类
+		MailApplication
+			注解SpringBootApplication
+			main方法
+				SpringApplication.run(MailApplication.class, args);
+4⃣️创建邮件模版resources/templates/mail.html
+	<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>入职欢迎邮件</title>
+</head>
+<body>
+    欢迎 <span th:text="${name}"></span> 加入 XXXX 大家庭，您的入职信息如下：
+    <table border="1">
+        <tr>
+            <td>姓名</td>
+            <td th:text="${name}"></td>
+        </tr>
+        <tr>
+            <td>职位</td>
+            <td th:text="${posName}"></td>
+        </tr>
+        <tr>
+            <td>职称</td>
+            <td th:text="${joblevelName}"></td>
+        </tr>
+        <tr>
+            <td>部门</td>
+            <td th:text="${departmentName}"></td>
+        </tr>
+    </table>
+    <p>我们公司的工作忠旨是严格，创新，诚信，您的加入将为我们带来新鲜的血液，带来创新的思维，以及为
+        我们树立良好的公司形象!希望在以后的工作中我们能够齐心协力，与时俱进，团结协作!同时也祝您在本公
+        司，工作愉快，实现自己的人生价值!希望在未来的日子里，携手共进！</p>
+		</body>
+		</html>
+5⃣️在yeb-server添加
+	pom依赖rabbitmq
+	application.xml配置
+6⃣️在EmployeeServiceImpl的addEmp里面加入邮件发送
+	注入rabbitTemplate
+		Employee emp = employeeMapper.getEmployee(employee.getId()).get(0);
+    rabbitTemplate.convertAndSend("mail.welcome",emp);
+    此时，Employee需要实现Serializable
+7⃣️在yeb-mail新建MailReceiver    
+	注入
+	mailProperties
+	templateEngine
+	javaMailSender
+	添加方法handler
+		注解
+		@RabbitListener(queues = "mail.welcome")
+		定义邮件内容
+		MimeMessage msg = javaMailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(msg);
+        try {
+            helper.setFrom(mailProperties.getUsername());
+            helper.setTo(employee.getEmail());
+            helper.setSubject("入职邮件");
+            helper.setSentDate(new Date());
+            Context context = new Context();
+            context.setVariable("name", employee.getName());
+            context.setVariable("posName", employee.getPosition().getName());
+            context.setVariable("joblevelName", employee.getJoblevel().getName());
+            context.setVariable("departmentName", employee.getDepartment().getName());
+            String mail = templateEngine.process("mail", context);
+            helper.setText(mail, true);
+            javaMailSender.send(msg);
+        } catch (MessagingException e) {
+            LOGGER.error("MailReceiver + 邮件发送失败========{}", e.getMessage());
+        }
+8⃣️在MailApplication编写
+	添加队列
+	@Bean
+    public Queue queue(){
+        return new Queue("mail.welcome");
+    }
+9⃣️在MailApplication添加注解忽略数据库配置资源
+	@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+```
 
