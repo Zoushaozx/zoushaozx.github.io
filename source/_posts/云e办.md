@@ -2431,3 +2431,376 @@ EmployeeMapper.xml详情
 
 ---
 
+# WebSocket在线聊天功能实现
+
+---
+
+```
+最大特点，服务器可以主动向客户推送信息，客户端可以主动向服务器发信息，真正的双向平等对话
+1⃣️引入依赖yeb-server
+	<!--websocket 依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+2⃣️新建类WebSocketConfig，实现WebSocketMessageBrokerConfigurer
+	注解
+		@Configuration
+		@EnableWebSocketMessageBroker
+	重写三个方法
+  	registerStompEndpoints
+  	configureClientInboundChannel
+  		jwt令牌相关
+  	configureMessageBroker
+3⃣️新建pojo类-ChatMsg
+4⃣️新建WebSocketController
+5⃣️在SecurityConfig进行放行
+	"/ws/**"
+6⃣️新建类ChatController	
+```
+
+WebSocketConfig详情
+
+```
+import com.zoux.server.config.security.component.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.config.ChannelRegistration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.util.StringUtils;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+/**
+ * WebSocket配置类
+ *
+ * @author zhanglishen
+ */
+
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    /**
+     * 添加这个Endpoint，这样在网页可以通过websocket连接上服务
+     * 也就是我们配置websocket的服务地址，并且可以指定是否使用socketJS
+     * @param registry
+     */
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        /**
+         * 1.将ws/ep路径注册为stomp的端点，用户连接了这个端点就可以进行websocket通讯，支持
+         socketJS
+         * 2.setAllowedOrigins("*")：允许跨域
+         * 3.withSockJS():支持socketJS访问
+         */
+        registry.addEndpoint("/ws/ep").setAllowedOrigins("*").withSockJS();
+    }
+
+    /**
+     * 输入通道参数配置
+     * @param registration
+     */
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new ChannelInterceptor() {
+            @Override
+            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                //判断是否为连接，如果是，需要获取token，并且设置用户对象
+                if (StompCommand.CONNECT.equals(accessor.getCommand())){
+                    //客户端发来的
+                    String token = accessor.getFirstNativeHeader("Auth-Token");
+                    if (!StringUtils.isEmpty(token)){
+                        //截取token，去掉前缀
+                        String authToken = token.substring(tokenHead.length());
+                        //获取用户名
+                        String username = jwtTokenUtil.getUserNameFromToken(authToken);
+                        //token中存在用户名
+                        if (!StringUtils.isEmpty(username)){
+                            //登录
+                            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                            //验证token是否有效，重新设置用户对象
+                            if (jwtTokenUtil.validateToken(authToken,userDetails)){
+                                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                                accessor.setUser(authenticationToken);
+                            }
+                        }
+                    }
+                }
+                return message;
+            }
+        });
+    }
+
+    /**
+     * 配置消息代理
+     * @param registry
+     */
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        //配置代理域，可以配置多个，配置代理目的地前缀为/queue,可以在配置域上向客户端推送消息
+        registry.enableSimpleBroker("/queue");
+    }
+
+}
+
+```
+
+ChatMs详情
+
+```
+package com.zoux.server.pojo;
+
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import org.springframework.security.core.parameters.P;
+
+import java.time.LocalDateTime;
+
+/**
+ * 消息
+ *
+ * @author zoux
+ * @since 1.0.0
+ */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false)
+public class ChatMsg {
+    private String from;
+    private String to;
+    private String content;
+    private LocalDateTime date;
+    private String fromNickName;
+}
+
+```
+
+WebSocketController详情
+
+```
+package com.zoux.server.controller;
+import com.zoux.server.pojo.Admin;
+import com.zoux.server.pojo.ChatMsg;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+
+import java.time.LocalDateTime;
+
+/**
+ *
+ */
+@Controller
+public class WebSocketController {
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @MessageMapping("/ws/chat")
+    public void handleMsg(Authentication authentication, ChatMsg chatMsg){
+        Admin admin = (Admin) authentication.getPrincipal();
+        chatMsg.setFrom(admin.getUsername());
+        chatMsg.setFromNickName(admin.getName());
+        chatMsg.setDate(LocalDateTime.now());
+        /**
+         * 发送消息
+         * 1.消息接收者
+         * 2.消息队列
+         * 3.消息对象
+         */
+        simpMessagingTemplate.convertAndSendToUser(chatMsg.getTo(),"/queue/chat",chatMsg);
+    }
+}
+
+```
+
+ChatController详情
+
+```
+package com.zoux.server.controller;
+
+import com.zoux.server.pojo.Admin;
+import com.zoux.server.service.IAdminService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+/**
+ * 在线聊天
+ */
+@RestController
+@RequestMapping("/chat")
+public class ChatController {
+
+    @Autowired
+    private IAdminService adminService;
+
+    @ApiOperation(value = "获取所有操作员")
+    @GetMapping("/admin")
+    public List<Admin> getAllAdmin(String keywords) {
+        return adminService.getAllAdmins(keywords);
+    }
+
+}
+
+```
+
+SecurityConfig详情
+
+```
+package com.zoux.server.config.security;
+
+import com.zoux.server.config.security.component.*;
+import com.zoux.server.pojo.Admin;
+import com.zoux.server.service.IAdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private IAdminService adminService;
+
+    @Autowired
+    private RestAuthorizationEntryPoint restAuthorizationEntryPoint;
+    @Autowired
+    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    @Autowired
+    private CustomUrlDecisionManager customUrlDecisionManager;
+    @Autowired
+    private CustomFilter customFilter;
+
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            Admin admin = adminService.getAdminByUserName(username);
+            if (null != admin) {
+                admin.setRoles(adminService.getRoles(admin.getId()));
+                return admin;
+            }
+            //抛出异常
+            throw new UsernameNotFoundException("用户名或密码不正确");
+        };
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    //利用Bean注解将JwtAuthorizationTokenFilter暴露出来
+    @Bean
+    public JwtAuthorizationTokenFilter jwtAuthorizationTokenFilter() {
+        return new JwtAuthorizationTokenFilter();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(
+                "/login",
+                "/logout",
+                "/css/**",
+                "/js/**",
+                "/index.html",
+                "favicon.ico",
+                "/doc.html",
+                "/webjars/**",
+                "/swagger-resources/**",
+                "/v2/api-docs/**",
+                "/captcha",
+                "/ws/**"
+        );
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        //使用JWT不需要csrf
+        http.csrf()
+                .disable()
+                //基于token不需要session
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                //允许登陆访问
+                .authorizeRequests()
+//                .antMatchers("/login", "/logout")
+//                .permitAll()
+                //访问请求要求认证
+                .anyRequest()
+                .authenticated()
+                //动态权限配置
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+                        o.setAccessDecisionManager(customUrlDecisionManager);
+                        o.setSecurityMetadataSource(customFilter);
+                        return o;
+                    }
+                })
+                .and()
+                //缓存关闭
+                .headers()
+                .cacheControl();
+
+        //添加jwt登陆授权拦截器
+        http.addFilterBefore(jwtAuthorizationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        //自定义未授权，或者未登录的结果返回
+        http.exceptionHandling()
+                .accessDeniedHandler(restfulAccessDeniedHandler)
+                .authenticationEntryPoint(restAuthorizationEntryPoint);
+    }
+}
+
+```
+
+
+
+---
+
