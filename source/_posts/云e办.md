@@ -2284,3 +2284,150 @@ public class SalaryController {
 
 ---
 
+# 员工帐套管理实现
+
+---
+
+```
+1⃣️新建类SalarySobCfgController
+	注解	
+		@RequestMapping("/salary/sobcfg")
+		@RestController
+	注入
+  	employeeService
+  	salaryService
+  新建方法
+  	获取所有员工套账
+  	获取所有工资套账
+  	更新员工套账
+2⃣️getEmployeeWithSalary需要自定义
+	IEmployeeService->EmployeeServiceImpl->EmployeeMapper->EmployeeMapper.xml
+3⃣️在pojo-Employee定义，以便用于xml
+	@ApiModelProperty(value = "工资帐套")
+  @TableField(exist = false)
+  private Salary salary;
+```
+
+SalarySobCfgController详情
+
+```
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.zoux.server.pojo.Employee;
+import com.zoux.server.pojo.RespBean;
+import com.zoux.server.pojo.RespPageBean;
+import com.zoux.server.pojo.Salary;
+import com.zoux.server.service.IEmployeeService;
+import com.zoux.server.service.ISalaryService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RequestMapping("/salary/sobcfg")
+@RestController
+public class SalarySobCfgController {
+    @Autowired
+    private ISalaryService salaryService;
+    @Autowired
+    private IEmployeeService employeeService;
+
+    @ApiOperation(value = "获取所有员工套账")
+    @GetMapping("/")
+    public RespPageBean getEmployeeWithSalary(@RequestParam(defaultValue = "1") Integer currentPage,@RequestParam(defaultValue = "10") Integer size){
+        return employeeService.getEmployeeWithSalary(currentPage,size);
+    }
+
+    @ApiOperation(value = "获取所有工资套账")
+    @GetMapping("/salaries")
+    public List<Salary> getAllSalary(){
+        return salaryService.list();
+    }
+
+    @ApiOperation(value = "更新员工套账")
+    @PutMapping("/")
+    public RespBean updateEmployeeSalary(Integer eid,Integer sid){
+        if (employeeService.update(new UpdateWrapper<Employee>().set("salaryId",sid).eq("id",eid))){
+            return RespBean.success("更新成功");
+        }
+        return RespBean.error("更新失败");
+    }
+}
+```
+
+EmployeeServiceImpl详情
+
+```
+/**
+     * 获取所有员工套账
+     *
+     * @param currentPage
+     * @param size
+     * @return
+     */
+    @Override
+    public RespPageBean getEmployeeWithSalary(Integer currentPage, Integer size) {
+        //开启分页
+        Page<Employee> page = new Page<>(currentPage, size);
+
+        IPage<Employee> employeeIPage = employeeMapper.getEmployeeWithSalary(page);
+        RespPageBean respPageBean = new RespPageBean(employeeIPage.getTotal(), employeeIPage.getRecords());
+        return respPageBean;
+    }
+```
+
+EmployeeMapper.xml详情
+
+```
+<!--    获取所有员工套账-->
+    <select id="getEmployeeWithSalary" resultMap="EmployeeWithSalary">
+        SELECT e.*,
+               td.`name`              as dname,
+               s.id                   AS sid,
+               s.`name`               AS sname,
+               s.basicSalary          AS sbasicSalary,
+               s.trafficSalary        AS strafficSalary,
+               s.lunchSalary          AS slunchSalary,
+               s.bonus                AS sbonus,
+               s.allSalary            AS sallSalary,
+               s.pensionPer           AS spensionPer,
+               s.pensionBase          AS spensionBase,
+               s.medicalPer           AS smedicalPer,
+               s.medicalBase          AS smedicalBase,
+               s.accumulationFundPer  AS saccumulationFundPer,
+               s.accumulationFundBase AS saccumulationFundBase
+        FROM t_employee as e
+                 LEFT JOIN t_salary as s ON e.salaryId = s.id
+                 LEFT JOIN t_department as td ON e.departmentId = td.id
+        ORDER BY e.id
+    </select>
+    
+    <resultMap id="EmployeeWithSalary" type="com.zoux.server.pojo.Employee" extends="BaseResultMap">
+        <association property="salary" javaType="com.zoux.server.pojo.Salary">
+            <id column="sid" property="id"/>
+            <result column="sbasicSalary" property="basicSalary"/>
+            <result column="sbonus" property="bonus"/>
+            <result column="slunchSalary" property="lunchSalary"/>
+            <result column="strafficSalary" property="trafficSalary"/>
+            <result column="sallSalary" property="allSalary"/>
+            <result column="spensionBase" property="pensionBase"/>
+            <result column="spensionPer" property="pensionPer"/>
+            <result column="smedicalBase" property="medicalBase"/>
+            <result column="smedicalPer" property="medicalPer"/>
+            <result column="saccumulationFundBase"
+                    property="accumulationFundBase"/>
+            <result column="saccumulationFundPer"
+                    property="accumulationFundPer"/>
+            <result column="sname" property="name"/>
+        </association>
+        <association property="department"
+                     javaType="com.zoux.server.pojo.Department">
+            <result column="dname" property="name"/>
+        </association>
+    </resultMap>
+```
+
+
+
+---
+
