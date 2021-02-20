@@ -1,5 +1,5 @@
 ---
-title: linux
+title: 云服务器&linux
 date: 2021-02-12 15:56:56
 tags:
 ---
@@ -43,5 +43,20 @@ rpm -e [package name] --nodeps
 忽略依赖关系的卸载可能会导致系统中其它的一些软件无法使用
 rpm -ql [package name]
 知道rpm包安装到哪里
+```
+
+文件上传
+
+```
+输入rz命令，看是否已经安装了lrzsz
+yum   -y  install  lrzsz命令进行安装
+rpm -qa lrzsz
+rz -y选择文件
+```
+
+fdfs
+
+```
+https://www.cnblogs.com/qiaolizhi/p/12461901.html
 ```
 

@@ -2804,3 +2804,309 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 ---
 
+# 个人中心功能实现
+
+---
+
+```
+1⃣️新建AdminInfoController类
+	注解
+		@RestController
+	注入
+		adminService
+	实现
+  	更新当前用户信息 updateAdmin @PutMapping("/admin/info")
+  	更新用户密码 updateAdminPassword @PutMapping("/admin/pass")
+2⃣️在AdminServiceImpl实现updatePassword
+	查询用户
+	比较新旧密码
+	更新数据
+3⃣️自定义Authority解析器
+	新建CustomAuthorityDeserializer类，继承JsonDeserializer
+	重写deserialize
+4⃣️在pojo-Admin启用	Authority解析器
+	@JsonDeserialize(using = CustomAuthorityDeserializer.class)
+5⃣️引入FastDFS依赖 yeb-server pom
+	 <!--FastDFS依赖-->
+        <dependency>
+            <groupId>org.csource</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <version>1.29-SNAPSHOT</version>
+        </dependency>
+如果爆红
+	在项目下面
+		git clone https://github.com/happyfish100/fastdfs-client-java.git
+		cd /fastdfs-client-java
+		mvn clean install
+6⃣️新建文件/resources/fdfs_client.conf
+7⃣️新建工具类FastDFSUtils	
+8⃣️AdminInfoController新建方法 更新用户头像 updateUserFace
+	注解
+		@ApiOperation(value = "更新用户头像")
+    @ApiImplicitParams({@ApiImplicitParam(name = "file", value = "头像", dataType = "MultipartFile")})
+    @PutMapping("/admin/userface")
+9⃣️在AdminServiceImpl实现updateAdminUserFace
+```
+
+AdminServiceImpl实现updatePassword
+
+```
+/**
+     * 更新用户密码
+     *
+     * @param oldPass
+     * @param pass
+     * @param adminId
+     * @return
+     */
+    @Override
+    public RespBean updatePassword(String oldPass, String pass, Integer adminId) {
+        Admin admin = adminMapper.selectById(adminId);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        //判断旧密码是否正确
+        if (encoder.matches(oldPass, admin.getPassword())) {
+            admin.setPassword(encoder.encode(pass));
+            int result = adminMapper.updateById(admin);
+            if (1 == result) {
+                return RespBean.success("更新成功");
+            }
+        }
+        return RespBean.error("更新失败");
+    }
+```
+
+AdminInfoController
+
+实现
+  	更新当前用户信息 updateAdmin @PutMapping("/admin/info")
+  	更新用户密码 updateAdminPassword @PutMapping("/admin/pass")
+
+```
+@Autowired
+    private IAdminService adminService;
+
+    @ApiOperation(value = "更新当前用户信息")
+    @PutMapping("/admin/info")
+    public RespBean updateAdmin(@RequestBody Admin admin, Authentication authentication) {
+        //更新成功,重新构建Authentication对象
+        if (adminService.updateById(admin)) {
+            /**
+             * 1.用户对象
+             * 2.凭证（密码）
+             * 3.用户角色
+             */
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(
+                            admin,
+                            authentication.getCredentials(),
+                            authentication.getAuthorities())
+            );
+            return RespBean.success("更新成功");
+        }
+        return RespBean.error("更新失败");
+    }
+
+    @ApiOperation(value = "更新用户密码")
+    @PutMapping("/admin/pass")
+    public RespBean updateAdminPassword(@RequestBody Map<String, Object> info) {
+        String oldPass = (String) info.get("oldPass");
+        String pass = (String) info.get("pass");
+        Integer adminId = (Integer) info.get("adminId");
+        return adminService.updatePassword(oldPass, pass, adminId);
+    }
+```
+
+新建文件/resources/fdfs_client.conf
+
+```
+#连接超时
+connect_timeout = 2
+#网络超时
+network_timeout = 30
+#编码格式
+charset = UTF-8
+#tracker端口号
+#http.tracker_http_port = 8080
+#防盗链功能
+http.anti_steal_token = no
+#秘钥
+http.secret_key = FastDFS1234567890
+#tracker ip：端口号
+tracker_server = 39.102.65.157:22122
+#连接池配置
+connection_pool.enabled = true
+connection_pool.max_count_per_entry = 500
+connection_pool.max_idle_time = 3600
+connection_pool.max_wait_time_in_ms = 1000
+```
+
+新建工具类FastDFSUtils	
+
+```
+package com.zoux.server.utils;
+
+import org.csource.fastdfs.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * FDFS工具类
+ */
+public class FastDFSUtils {
+    private static Logger logger = LoggerFactory.getLogger(FastDFSUtils.class);
+
+    /**
+     * 初始化客户端
+     * ClientClobal.ini 读取配置文件，并初始化对应的配置
+     */
+    static {
+        try {
+            String filePath = new ClassPathResource("fdfs_client.conf").getFile().getAbsolutePath();
+            ClientGlobal.init(filePath);
+        } catch (Exception e) {
+            logger.error("初始化Fdfs失败", e);
+        }
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param file
+     * @return
+     */
+    public static String[] upload(MultipartFile file) {
+        String filename = file.getOriginalFilename();
+        logger.info("File Name :" + filename);
+        long startTime = System.currentTimeMillis();
+        String[] uploadResults = null;
+        StorageClient storageClient = null;
+        //获取storage客户端
+        try {
+            storageClient = getStorageClient();
+            //上传
+            try {
+                uploadResults = storageClient.upload_file(file.getBytes(),
+                        filename.substring(filename.lastIndexOf(".") + 1), null);
+            } catch (IOException e) {
+                logger.error("IO Exception when uploadind the file:" + filename, e);
+            }
+        } catch (Exception e) {
+            logger.error("Non IO Exception when uploadind the file:" + filename, e);
+        }
+        logger.info("upload_file time used:" + (System.currentTimeMillis() - startTime) + " ms");
+        //验证上传结果
+        if (uploadResults == null && storageClient != null) {
+            logger.error("upload file fail, error code:" + storageClient.getErrorCode());
+        }
+        //上传成功返回groupName
+        logger.info("upload file successfully!!!" + "group_name:" + uploadResults[0] + ", remoteFileName:" + " " + uploadResults[1]);
+        return uploadResults;
+    }
+
+    /**
+     * 获取文件信息
+     *
+     * @param groupName
+     * @param remoteFileName
+     * @return
+     */
+    public static FileInfo getFileInfo(String groupName, String remoteFileName) {
+        try {
+            StorageClient storageClient = getStorageClient();
+            return storageClient.get_file_info(groupName, remoteFileName);
+        } catch (IOException e) {
+            logger.error("IO Exception: Get File from Fast DFS failed", e);
+        } catch (Exception e) {
+            logger.error("Non IO Exception: Get File from Fast DFS failed", e);
+        }
+        return null;
+    }
+
+    /**
+     * 下载
+     *
+     * @param groupName
+     * @param remoteFileName
+     * @return
+     */
+    public static InputStream downFile(String groupName, String remoteFileName) {
+        try {
+            StorageClient storageClient = getStorageClient();
+            byte[] bytes = storageClient.download_file(groupName, remoteFileName);
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            return inputStream;
+        } catch (IOException e) {
+            logger.error("IO Exception: Get File from Fast DFS failed", e);
+        } catch (Exception e) {
+            logger.error("Non IO Exception: Get File from Fast DFS failed", e);
+        }
+        return null;
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param groupName
+     * @param remoteFileName
+     * @throws Exception
+     */
+    public static void deleteFile(String groupName, String remoteFileName) throws Exception {
+        StorageClient storageClient = getStorageClient();
+        int i = storageClient.delete_file(groupName, remoteFileName);
+        logger.info("delete file successfully!!!" + i);
+    }
+
+    /**
+     * 生成Storage客户端
+     *
+     * @return
+     */
+    private static StorageClient getStorageClient() throws IOException {
+        TrackerServer trackerServer = getTrackerServer();
+        StorageClient storageClient = new StorageClient(trackerServer, null);
+        return storageClient;
+    }
+
+    /**
+     * 生成Tracker服务器端
+     *
+     * @return
+     */
+    private static TrackerServer getTrackerServer() throws IOException {
+        TrackerClient trackerClient = new TrackerClient();
+        TrackerServer trackerServer = trackerClient.getTrackerServer();
+        return trackerServer;
+    }
+
+    /**
+     * 获取文件路径
+     *
+     * @return
+     */
+    public static String getTrackerUrl() {
+        TrackerClient trackerClient = new TrackerClient();
+        TrackerServer trackerServer = null;
+        StorageServer storageServer = null;
+        try {
+            trackerServer = trackerClient.getTrackerServer();
+            storageServer = trackerClient.getStoreStorage(trackerServer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "http://" + storageServer.getInetSocketAddress().getHostString() + ":8888/";
+    }
+
+}
+
+```
+
+
+
+---
+
