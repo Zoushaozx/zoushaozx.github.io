@@ -8,7 +8,7 @@ tags:
 
 
 
-## 后端技术栈
+# 后端技术栈
 
 ```
 springboot 
@@ -28,7 +28,7 @@ websocket 在线聊天
 fastDFS 文件服务器 承载静态资源
 ```
 
-## 前端技术栈
+# 前端技术栈
 
 ```
 vue
@@ -47,7 +47,7 @@ js-file-download 文件下载
 
 
 
-搭建后端项目
+# 搭建后端项目
 
 ```
 搭建数据库 yeb.sql
@@ -176,7 +176,7 @@ lombok 插件
 	🔟在resources下新建comfig目录，将YebAppication.yml
 ```
 
-逆向工程
+# 逆向工程
 
 ```
 根据新建pojo mapper controller 单表查询
@@ -403,7 +403,7 @@ public class MysqlGenerator {
 
 ```
 
-Jwt Token工具类
+# Jwt Token工具类
 
 ```
 1⃣️引入jwt，security依赖
@@ -523,7 +523,7 @@ jwt:
     }
 ```
 
-公共返回对象
+# 公共返回对象
 
 ```
 登录流程：
@@ -543,7 +543,7 @@ jwt:
     }
 ```
 
-登录之后返回token
+# 登录之后返回token
 
 ```
 一 前端传用户名密码，后端校验
@@ -584,7 +584,7 @@ jwt:
 	8⃣️passwordEncoder对象等待处理
 ```
 
-获取当前登录用户信息
+# 获取当前登录用户信息
 
 ```
 登陆时将当前登录对象设制到springsecurity全局，所以可以利用Principal获取当前登录用户对象
@@ -602,14 +602,14 @@ jwt:
 
 ```
 
-退出登录
+# 退出登录
 
 ```
 后端返回200状态码，前端根据状态码，将请求头里面的token删除 
 1⃣️在LoginController里面 新建方法logout 返回状态码200
 ```
 
-配置security登陆过滤器
+# 配置security登陆过滤器
 
 ```
 1⃣️准备配置类SecurityConfig，继承 WebSecurityConfigurerAdapter
@@ -669,7 +669,7 @@ jwt:
 	并填入【添加jwt登陆授权拦截器】同时加上参数，UsernamePasswordAuthenticationFilter.class
 ```
 
-security自定义返回结果
+# security自定义返回结果
 
 ```
 1⃣️新建类RestAuthorizationEntryPoint，实现AuthenticationEntryPoint
@@ -728,7 +728,7 @@ swagger2配资
     }
 ```
 
-swagger2提供Authorize
+# swagger2提供Authorize
 
 ```
 实现全局登录
@@ -761,7 +761,7 @@ swagger2提供Authorize
 6⃣️进行Authorize设置，将Bearer空格tokon进行保存
 ```
 
-生成验证码
+# 生成验证码
 
 ```
 1⃣️引入Google验证码依赖
@@ -828,7 +828,7 @@ swagger2提供Authorize
 5⃣️接口文档验证码乱码-在注解添加 @GetMapping(value = "/captcha",produces = "image/jpeg")
 ```
 
-验证码校验
+# 验证码校验
 
 ```
 1⃣️在AdminLoginParam添加接收参数
@@ -841,7 +841,7 @@ swagger2提供Authorize
 	不为空前端输入与后端验证码进行匹配
 ```
 
-根据用户id查询菜单列表
+# 根据用户id查询菜单列表
 
 ```
 1⃣️更改pojo实体类Menu
@@ -900,7 +900,7 @@ swagger2提供Authorize
 
 ```
 
-Redis集成菜单功能
+# Redis集成菜单功能
 
 ```
 1⃣️添加依赖
@@ -947,7 +947,7 @@ Redis集成菜单功能
 5⃣️后期，当涉及到数据菜单更新时，我们要重置redis里面的数据
 ```
 
-根据请求url判断角色
+# 根据请求url判断角色
 
 ```
 权限RBAC基本概念
@@ -984,7 +984,7 @@ Redis集成菜单功能
 		如果url匹配不上就默认给一个登陆角色
 ```
 
-判断用户角色
+# 判断用户角色
 
 ```
 1⃣️修改pojo-Admin
@@ -1041,7 +1041,7 @@ Redis集成菜单功能
     }
 ```
 
-职位管理功能实现
+# 职位管理功能实现
 
 ```
 1⃣️自定义日期格式
@@ -1069,7 +1069,7 @@ Redis集成菜单功能
   	positionService.removeByIds(Arrays.asList(ids))
 ```
 
-全局异常
+# 全局异常
 
 ```
 1⃣️新建包exception并新建类GlobalException
@@ -1079,7 +1079,7 @@ Redis集成菜单功能
   
 ```
 
-职称管理功能实现
+# 职称管理功能实现
 
 ```
 1⃣️给pojo-Joblevel类的属性createDate加上注解
@@ -1089,7 +1089,7 @@ Redis集成菜单功能
 	与职位管理功能类似
 ```
 
-权限组角色功能实现
+# 权限组角色功能实现
 
 ```
 通过角色表和用户表管关联，进而给用户分配不同的角色
@@ -1139,7 +1139,7 @@ Redis集成菜单功能
               </insert>
 ```
 
-存储过程的创建和使用
+# 存储过程的创建和使用
 
 ```
 存储过程就是具有名字的一段代码，用来完成一个特定的功能
@@ -1197,7 +1197,7 @@ begin
 end
 ```
 
-部门管理功能实现
+# 部门管理功能实现
 
 ```
 1⃣️获取所有部门
@@ -1275,7 +1275,7 @@ end
         </select>
 ```
 
-操作员管理功能
+# 操作员管理功能
 
 ```
 1⃣️获取所有操作员
@@ -1363,7 +1363,7 @@ end
     </update>	
 ```
 
-员工管理功能-分页
+# 员工管理功能-分页
 
 ```
 1⃣️分页配置
@@ -1499,7 +1499,7 @@ end
         </resultMap>
 ```
 
-员工管理功能-添加/删除/更新员工
+# 员工管理功能-添加/删除/更新员工
 
 ```
 1⃣️获取所有政治面貌
@@ -1550,7 +1550,7 @@ end
         return RespBean.error("删除失败");
 ```
 
-员工数据导入导出
+# 员工数据导入导出
 
 ```
 1⃣️引入easy poi依赖
@@ -1684,7 +1684,7 @@ end
     	employeeService.saveBatch(list)
 ```
 
-邮件功能
+# 邮件功能
 
 ```
 1⃣️开启邮箱SMTP服务
@@ -1792,7 +1792,7 @@ end
 	@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 ```
 
-生产端可靠投递方案介绍
+# 生产端可靠投递方案介绍
 
 ```
 解偶
@@ -1808,7 +1808,7 @@ end
 
 ---
 
-## 开启消息回调机制
+# 开启消息回调机制
 
 ```
 1⃣️新建pojo类MailConstants
