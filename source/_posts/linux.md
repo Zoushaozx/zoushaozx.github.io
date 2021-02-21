@@ -1,5 +1,5 @@
 ---
-title: 云服务器&linux
+title: linux
 date: 2021-02-12 15:56:56
 tags:
 ---
@@ -54,9 +54,10 @@ rpm -qa lrzsz
 rz -y选择文件
 ```
 
-fdfs
+批量移动
 
 ```
-https://www.cnblogs.com/qiaolizhi/p/12461901.html
+mv file mysql* mysql
+	 文件以mysql开始 移动到当前文件夹mysql
 ```
 
