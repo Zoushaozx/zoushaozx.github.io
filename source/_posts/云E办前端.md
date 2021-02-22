@@ -169,3 +169,142 @@ js-file-download 文件下载
 
 ---
 
+# 登录页面&前后端联调
+
+---
+
+```
+1⃣️引入element ui
+	安装 npm i element-ui -S  -S 安装到项目目录里面，将依赖加入到正式环境依赖，
+	引入 进入main.js  
+		import ElementUI from 'element-ui';
+		import 'element-ui/lib/theme-chalk/index.css';
+2⃣️清理App.vue 删除 页面About Home 组件Hellworld
+3⃣️views新建页面Login.vue
+4⃣️配置路由 router/index.js
+	导入 import Login from '../views/Login.vue'
+	配置路由详情
+  	{ path: '/', 默认渲染Login
+      name: 'Login',
+      component: Login
+      }
+  使用 Vue.use(ElementUI);    
+5⃣️登录页面完善 
+6⃣️校验数据
+	规定 在el-form加入:rules="rules"规则绑定
+	绑定 具体检验的数据绑定 el-form-item加入prop="username"
+	校验 数据域
+		rules: {username: [{required: true, message: '请输入用户名', trigger: 'blur'}]}
+7⃣️登陆事件
+	入口 登录按钮 绑定点击事件 @click="submitLogin"
+	方法域 submitLogin() { 
+	利用ref反射定位到loginForm
+	使用validate方法进行校验
+    this.$refs.loginForm.validate((valid) => {
+      if (valid) {} 判断valid false校验不通过
+    });
+    }
+```
+
+```
+8⃣️前后端联调
+	安装axios 
+		npm install axios
+	新建文件夹utils
+  	新建文件api.js
+  api.js内容		
+  	引入element-ui-Message import {Message} from "element-ui";
+  	响应拦截器 - 统一处理消息提示，调用axios的interceptors.request.use
+    	业务逻辑错误
+    		后端：500 业务逻辑错误，401 未登录，403 无权访问；
+    	成功访问	
+    		成功访问可打印信息
+    		成功访问可返回数据
+     	没访问到后端接口
+    		判断具体错误
+    传送json格式的请求 post get put delete
+    	格式
+    		// 预备前置路径 大型项目用于区分资源
+				let base = '';
+    		export const postRequest = (url, params) => {
+            return axios({
+                method: 'post',
+                url: `${base}${url}`,
+                data: params
+            })
+        }
+```
+
+```
+9⃣️跨域问题解决
+	项目根目录新建vue.config.js
+		导出对象devServer
+			module.exports = { 
+          devServer: {
+              host: 'localhost',
+              port: 8080,
+              proxy: proxyObj // 代理对象
+          }
+      }
+    代理对象
+    	let proxyObj = {} // 代理对象
+      proxyObj['/'] = {  //所有/都进行代理
+          // websocket
+          ws: false,
+          // 代理目标地址
+          target: 'http://localhost:8081',
+          // 发送请求头 host 会被设置 target
+          changeOrigin: true,  //target参数是域名
+          // 不重写请求地址
+          pathRewrite: {
+              '^/': '/'
+          }
+      }
+```
+
+```
+验证码前后端联调测试       
+ 	入口	<img :src="captchaUrl"  @click="updateCaptcha" >
+ 	数据	captchaUrl:'/captcha?time=' + new Date(),
+  方法	updateCaptcha() {
+          this.captchaUrl = '/captcha?time=' + new Date()
+        }
+```
+
+```
+登陆前后端联调测试
+	加入加载动画 Login.vue
+  	在el-form标签里面加入
+  		v-loading="loading"
+      element-loading-text="正在登录......"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
+    在数据域 加入  loading: false, //加载动画
+    在方法域 登陆成功前 加this.loading=true 判断登陆成功后 this.loading=false
+    
+  封装请求和响应 utils/api.js
+  	请求拦截器-将请求进行加工 axios.interceptors.request.use
+  		登陆请求 将token存入sessionStorage
+  			if (window.sessionStorage.getItem("tokenStr")) {
+            // token 的key : Authorization ; value: tokenStr
+            config.headers['Authorization'] = window.sessionStorage.getItem('tokenStr')
+    			}
+  	响应拦截器-统一处理消息提示 axios.interceptors.response.use
+  	
+  插件形式使用请求
+		在main.js里面
+			import {postRequest} from "./utils/api"
+			Vue.prototype.postRequest = postRequest;  		
+  处理登陆请求 Login.vue 方法域 submitLogin
+  	登陆请求联调后端
+  		使用utils/api.js/封装的postRequest
+  			this.postRequest('/login',this.loginForm).then(resp=>{})
+  				参数一，后端接口
+  				参数二，前端登陆表单
+  				then表示使用通讯框架方法进行接口访问
+  				resp自定义的回调结果 用于判断登陆成功与否
+      存储用户 token 到 sessionStorage
+        const tokenStr = resp.obj.tokenHead + resp.obj.token
+        window.sessionStorage.setItem('tokenStr', tokenStr)
+```
+
