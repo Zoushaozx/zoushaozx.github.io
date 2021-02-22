@@ -463,7 +463,7 @@ js-file-download 文件下载
 	@command="commandHandler"
 2⃣️具体事件类型  Home.vue  el-dropdown-item 标签 添加时间标注
 	command="logout"
-3⃣️方法域 添加方法 commandHandler(command) {
+3⃣️Home.vue 方法域 添加方法 commandHandler(command) {
 	if (command === 'logout') {}	
 	}	
 	弹框提示用户是否要注销登录 this.$confirm("提醒信息",{}).then(() => {
@@ -476,4 +476,19 @@ js-file-download 文件下载
 ```
 
 ---
+
+# 面包屑导航栏效果
+
+---
+
+```
+1⃣️在 Home.vue 标签el-main 添加
+<el-breadcrumb separator-class="el-icon-arrow-right" v-if="this.$router.currentRoute.path!=='/home'">
+   <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+   <el-breadcrumb-item>{{this.$router.currentRoute.name}}</el-breadcrumb-item>
+ </el-breadcrumb>
+ <div class="homeWelcome" v-if="this.$router.currentRoute.path==='/home'">
+   欢迎来到云E办系统！
+ </div>             
+```
 
