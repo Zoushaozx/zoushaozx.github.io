@@ -492,3 +492,29 @@ js-file-download 文件下载
  </div>             
 ```
 
+---
+
+# 未登陆bug
+
+---
+
+```
+1⃣️main.js
+	判断携带 token 为 未携带
+	更改访问路径
+	if (to.path === '/') {
+        next()
+    } else {
+        next('/?redirect=' + to.path)
+    }
+2⃣️在Login.vue submitLogin 中 
+	页面跳转时
+	拿到用户要跳转的路径
+		let path = this.$route.query.redirect;
+	用户可能输入首页地址或错误地址，让他跳到首页，否则跳转到他输入的地址
+  	this.$router.replace((path === '/' || path === undefined) ? '/home' : path)
+
+```
+
+---
+
