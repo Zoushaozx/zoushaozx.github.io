@@ -308,3 +308,130 @@ js-file-download 文件下载
         window.sessionStorage.setItem('tokenStr', tokenStr)
 ```
 
+---
+
+# 导航菜单功能
+
+---
+
+```
+1⃣️开启路由模式 
+	在Home.vue el-menu 标签里面加上router
+2⃣️获取路由数组
+	v-for="(item,index) in this.$router.options.routes" 
+3⃣️隐藏路由，配置路由时，加上属性hidden
+	hidden: true
+4⃣️更改路由数组结构
+	给路由添加子路由
+		children: [
+			{
+          path: '/userinfo',
+          name: '个人中心',
+          component: AdminInfo
+      }
+		]
+5⃣️利用vuex存储菜单，实际上存在内存里面
+		安装 npm install vuex --save
+		配置 vuex 项目根目录新建文件夹store并创建index.js
+			index.js内容
+				引入Vue、Vuex
+				使用vuex Vue.use(Vuex)
+				导出 Vuex.Store()
+					state: {  //可以理解为是一个全局对象,用来保存所有组件的公共的数据
+       		 routes:[]
+          },
+          mutations: {    //改变state值的方法 同步执行
+              initRoutes(state, data) {  //初始化state里面的routes
+                  state.routes = data;
+              }
+          },
+          actions: {  //改变state值的方法 异步执行          }
+    在main.js引入vuex
+    	import store from "./store"
+        new Vue({
+          router,
+          store,
+          render: h => h(App)
+        }).$mount('#app')
+6⃣️获取数据并存入vues&格式化        
+	新建工具类menus.js
+  	引入 import { getRequest } from "./api"
+		----------------------------
+    导出 formatRoutes    	
+        新建数组用于存放格式化后的路由
+        循环传入的对象
+				定义路由格式
+					利用递归方式循环定义路由格式
+						let {   
+            path,   
+            component,
+            name,
+            iconCls,
+            children
+              } = router;
+              // 如果有 children存在 并且类型是数组
+              if (children && children instanceof Array) {
+                  // 递归
+                  children = formatRoutes(children)
+              }	
+          具体格式化
+          	let fmRouter = {
+              path: path,
+              name: name,
+              iconCls: iconCls,
+              children: children,
+              component(resolve) { //进行格式化
+                      require(['../views/' + component + '.vue'], resolve);
+                  }
+              }
+		      插入到数组  
+          ------------------
+          导出 initMenu = (router, store)
+            判断路由数据是否完成格式化并存储 存在直接返回
+            通过getRequest('/system/cfg/menu').then(data) 获取菜单数据
+              格式化好路由	let fmtRoutes = formatRoutes(data)
+              添加到 router	router.addRoutes(fmtRoutes) 
+              将数据存入 Vuex	store.commit('initRoutes',fmtRoutes)
+          ---------------------
+          完善新建工具类menus.js
+          	在views下新建文件夹 emp per sal sta sys
+          	根据数据库t_mune新建vue页面
+          	修改	menus.js  单独对某一个路由格式化 component
+          		如 判断组件以Home开头，到对应的目录去找
+          			if (component.startsWith('Home')) {
+                    require(['../views/' + component + '.vue'], resolve);
+                }
+7⃣️初始化菜单
+	路由导航守卫 在main.js注册一个全局前置守卫
+		// 使用 router.beforeEach 注册一个全局前置守卫
+    router.beforeEach((to, from, next) => {
+      // to 要去的路由; from 来自哪里的路由 ; next() 放行
+      // 用户登录成功时，把 token 存入 sessionStorage，如果携带 token，初始化菜单，放行
+      if (window.sessionStorage.getItem('tokenStr')) { 
+        initMenu(router, store)
+        next();
+      } else {
+        next();
+        }
+    	})
+	展开菜单-独立展开
+		el-menu 标签 加 unique-opened
+		引入了计算属性 this.$router.options.routes 可用routes代替
+			computed: { //计算属性
+          // 从 vuex 获取 routes
+          routes() {
+            return this.$store.state.routes
+          }
+        }
+    更改 el-submenu 标签里的 index=“1” :index = "index+''"
+    引入font-awesome头像模版
+    	安装 npm install  font-awesome
+    	引入 import 'font-awesome/css/font-awesome.css'
+			使用	:class="item.iconCls" 绑定class  iconCls为数据库字段存储头像编码
+			样式  style="color: black;margin-right: 5px"
+	特别注意：
+  	路由格式化时Home目录为 equire(['../views/' + component + '.vue'], resolve);
+```
+
+
+
