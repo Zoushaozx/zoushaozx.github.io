@@ -433,5 +433,47 @@ js-file-download 文件下载
   	路由格式化时Home目录为 equire(['../views/' + component + '.vue'], resolve);
 ```
 
+---
 
+# 获取用户信息功能实现
+
+---
+
+```
+1⃣️修改项目标题
+	加样式
+2⃣️在main.js 路由前置守卫 将用户信息存入sessionStorage
+	用户登录成功时，把 token 存入 sessionStorage，如果携带 token，初始化菜单，放行
+	判断用户信息是否存在
+		不存在
+		存入用户信息，转字符串，存入 sessionStorage
+3⃣️在Home.vue 数据域 里添加用户信息
+4⃣️使用用户信息	 
+	在 Home.vue {{ user.name }}<i><img :src="user.userFace"></i>
+```
+
+---
+
+# 注销登录功能实现
+
+---
+
+```
+1⃣️点击事件 Home.vue   el-dropdown 标签 添加点击事件入口
+	@command="commandHandler"
+2⃣️具体事件类型  Home.vue  el-dropdown-item 标签 添加时间标注
+	command="logout"
+3⃣️方法域 添加方法 commandHandler(command) {
+	if (command === 'logout') {}	
+	}	
+	弹框提示用户是否要注销登录 this.$confirm("提醒信息",{}).then(() => {
+	注销登录
+	清空用户信息
+	清空菜单信息  在src/utils/menus.js 中初始化菜单信息
+	路由替换到登录页面
+	}).catch(() => {
+	已取消注销登录
+```
+
+---
 
