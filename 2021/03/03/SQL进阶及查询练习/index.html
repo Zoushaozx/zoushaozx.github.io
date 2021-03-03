@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="mysql编码问题 1解决小黑框查询显示问题  约束 12345主键约束主键 非空 唯一 可引用创建约束	empno int primary key				 alter table 表名 add primary key （列名）删除约束	alter table 表名 drop primary key；          1234567主键自增长	create table emp(    empno">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL进阶及查询练习">
+<meta property="og:url" content="http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Zoux">
+<meta property="og:description" content="mysql编码问题 1解决小黑框查询显示问题  约束 12345主键约束主键 非空 唯一 可引用创建约束	empno int primary key				 alter table 表名 add primary key （列名）删除约束	alter table 表名 drop primary key；          1234567主键自增长	create table emp(    empno">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-03T10:03:51.000Z">
+<meta property="article:modified_time" content="2021-03-03T06:43:37.796Z">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>SQL进阶及查询练习</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about">关于</a></li>
+         
+          <li><a href="/archives">归档</a></li>
+         
+          <li><a href="/projects">项目</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/03/03/xml/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2021/03/02/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8ASQL-MySQL%E5%9F%BA%E7%A1%80/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&text=SQL进阶及查询练习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&is_video=false&description=SQL进阶及查询练习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SQL进阶及查询练习&body=Check out this article: http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&name=SQL进阶及查询练习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&t=SQL进阶及查询练习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">mysql编码问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F"><span class="toc-number">2.</span> <span class="toc-text">约束</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">关系模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">4.</span> <span class="toc-text">多表查询</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        SQL进阶及查询练习
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name"></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-03-03T10:03:51.000Z" itemprop="datePublished">2021-03-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="mysql编码问题"><a href="#mysql编码问题" class="headerlink" title="mysql编码问题"></a>mysql编码问题</h1><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">解决小黑框查询显示问题</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h1><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">主键约束</span><br><span class="line">主键 非空 唯一 可引用</span><br><span class="line">创建约束	empno int primary key</span><br><span class="line">				 alter table 表名 add primary key （列名）</span><br><span class="line">删除约束	alter table 表名 drop primary key；         </span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">主键自增长</span><br><span class="line">	create table emp(</span><br><span class="line">    empno int primary key auto_increment,</span><br><span class="line">    ename varchar(50)</span><br><span class="line">    );</span><br><span class="line">auto_increment 类型必须为int</span><br><span class="line">使用uuid为主键</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">非空约束 not null</span><br><span class="line">唯一 unique</span><br><span class="line">ename varchar(50) not null unique</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h1><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">一对一 主键等于外键</span><br><span class="line">create table hasband (</span><br><span class="line">hid int primary key auto_increment,</span><br><span class="line">hname varchar(50)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">create table wife(</span><br><span class="line">wid int primary key auto_increment,</span><br><span class="line">wname varchar(50),</span><br><span class="line">constraint fk_wife_hasband foreign key(wid) references hasband(hid)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">多对多 利用中间表存储关系</span><br><span class="line">create table stu</span><br><span class="line">(</span><br><span class="line">sid int primary key auto_increment,</span><br><span class="line">sname varchar(50)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">create table tea</span><br><span class="line">(</span><br><span class="line">tid int primary key auto_increment,</span><br><span class="line">tname varchar(50)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">create table stu_tea(</span><br><span class="line">sid int ,</span><br><span class="line">tid int,</span><br><span class="line">constraint fk_student foreign key(sid) references stu(sid),</span><br><span class="line">constraint fk_teacher foreign key(tid) references tea(tid)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="多表查询"><a href="#多表查询" class="headerlink" title="多表查询"></a>多表查询</h1><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">合并结果集</span><br><span class="line">	结果集列的类型和列数相同</span><br><span class="line">	union 去除重复行</span><br><span class="line">	union all 不去除重复行</span><br><span class="line">select * from 表名</span><br><span class="line">union all </span><br><span class="line">select * from 表名</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">内连接  方言</span><br><span class="line">select e.ename,e.sal,d.dname</span><br><span class="line">from emp e ,dept d</span><br><span class="line">where e.deptno &#x3D;d.deptno;</span><br><span class="line"></span><br><span class="line">内连接 标准</span><br><span class="line">select  e.ename,e.sal,d.dname</span><br><span class="line">from emp e ,dept d</span><br><span class="line">on e.deptno &#x3D;d.deptno;</span><br><span class="line"></span><br><span class="line">内连接 自然连接</span><br><span class="line">select e.ename,e.sal,d.dname</span><br><span class="line">from emp e ,dept d；</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">外连接 左外连接</span><br><span class="line">select e.ename,e.sal,d.dname</span><br><span class="line">from emp e left outer join dept d</span><br><span class="line">on e.deptno &#x3D;d.deptno</span><br><span class="line"></span><br><span class="line">外连接 右外连接</span><br><span class="line">select e.ename,e.sal,d.dname</span><br><span class="line">from emp e right outer join dept d</span><br><span class="line">on e.deptno &#x3D;d.deptno</span><br><span class="line"></span><br><span class="line">外连接 全连接</span><br><span class="line">select e.ename,e.sal,d.dname</span><br><span class="line">from emp e left outer join dept d</span><br><span class="line">on e.deptno &#x3D;d.deptno</span><br><span class="line">union</span><br><span class="line">select e.ename,e.sal,d.dname</span><br><span class="line">from emp e right outer join dept d</span><br><span class="line">on e.deptno &#x3D;d.deptno</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">子查询</span><br><span class="line">位置</span><br><span class="line">	where </span><br><span class="line">	from</span><br><span class="line">条件</span><br><span class="line">	单行单列 </span><br><span class="line">	select * from 表名 别名 where 列名 [&#x3D; &gt; &lt; &gt;&#x3D; &lt;&#x3D; !&#x3D;] (select * from 表名 别名 where 条件)</span><br><span class="line">	</span><br><span class="line">	多行单列 </span><br><span class="line">	select * from 表名 别名 where 列名 [in all any] (select * from 表名 别名 where 条件)</span><br><span class="line">	</span><br><span class="line">	单行多列</span><br><span class="line">	select * from 表名 别名 where (列名，列名) in (select * from 表名 别名 where 条件)</span><br><span class="line">	</span><br><span class="line">	多行多列</span><br><span class="line">	select * from 表名 别名,(select * from 表名 别名 where) 别名 where 条件； </span><br></pre></td></tr></table></figure>
+
+  </div>
+  <div> 
+    <a href="https://github.com/Zoushaozx/zoushaozx.github.io/edit/myblog/source/_posts/SQL进阶及查询练习.md" target="_blank">
+             <!-- https://github.com/Zoushaozx/zoushaozx.github.io/edit/myblog/source/_posts/hello-world.md -->
+      编辑
+    </a>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about">关于</a></li>
+         
+          <li><a href="/archives">归档</a></li>
+         
+          <li><a href="/projects">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">mysql编码问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F"><span class="toc-number">2.</span> <span class="toc-text">约束</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">关系模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">4.</span> <span class="toc-text">多表查询</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&text=SQL进阶及查询练习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&is_video=false&description=SQL进阶及查询练习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SQL进阶及查询练习&body=Check out this article: http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&title=SQL进阶及查询练习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&name=SQL进阶及查询练习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/03/03/SQL%E8%BF%9B%E9%98%B6%E5%8F%8A%E6%9F%A5%E8%AF%A2%E7%BB%83%E4%B9%A0/&t=SQL进阶及查询练习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2021
+    Zoux
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about">关于</a></li>
+         
+          <li><a href="/archives">归档</a></li>
+         
+          <li><a href="/projects">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
