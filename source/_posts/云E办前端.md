@@ -303,6 +303,7 @@ js-file-download 文件下载
   				参数二，前端登陆表单
   				then表示使用通讯框架方法进行接口访问
   				resp自定义的回调结果 用于判断登陆成功与否
+  				
       存储用户 token 到 sessionStorage
         const tokenStr = resp.obj.tokenHead + resp.obj.token
         window.sessionStorage.setItem('tokenStr', tokenStr)
@@ -517,4 +518,188 @@ js-file-download 文件下载
 ```
 
 ---
+
+# 基础信息设置
+
+---
+
+```
+1⃣️ 在SysBasic.vue   elementui 标签页 引入
+		<template>
+     <el-tabs v-model="activeName" type="card">
+      <el-tab-pane label="职位管理" name="PosMenu">
+      	<PosMenu></PosMenu>
+      </el-tab-pane>
+     </el-tabs>
+    </template>	
+    引入组件DepMenu
+    	import DepMenu from '../../components/sys/basic/DepMenu'
+      组件域  components: {DepMenu}	
+2⃣️在src/components下新建文件夹sys 在sys下新建文件 PosMenu.vue
+```
+
+---
+
+# 职位管理页面设计
+
+---
+
+```
+1⃣️添加职位
+  引入elementui 输入框
+  引入elementui 按钮
+  方法入口 点击/键盘entry
+  数据域 定义json对象，用于访问后端接口
+  方法域 访问后端接口 
+2⃣️信息展示区域
+	引入elementui 表格
+	引入多选框 el-table-column的 type=selection
+	引入操作 删除 编辑
+	数据域 定义json对象，用于访问后端接口数据存贮
+  方法域 访问后端接口 
+  方法入口 vue生命周期 mounted 页面初始化就要展示的数据放里面
+3⃣️删除操作
+	确认提示
+	访问后端节后
+	刷新数据
+4⃣️编辑操作
+	引入对话框 
+5⃣️批量删除操作
+	引入按钮
+```
+
+---
+
+# 职称管理界面设计
+
+---
+
+```
+1⃣️添加职称
+	
+```
+
+---
+
+# 部门管理界面设计
+
+---
+
+```
+1⃣️部门展示&搜索
+	引入 树形控件-节点过滤 
+	加入 图标prefix-icon="el-icon-search"
+	数据 
+		filterText 搜索字段
+		deps[] 展示数据
+		defaultProps 默认数据
+	方法域 
+  	initDeps 获取数据 getRequest  /system/basic/department/
+  	filterNode 
+  mounted 加载initDeps
+  watch 监控filterText 调用 filterNode
+2⃣️部门添加&删除  
+	引入 自定义节点按钮 添加&删除
+	样式 更改样式 按钮
+	属性 :expand-on-click-node="false" 点击按钮不会展开树
+	按钮 添加事件 添加/删除
+	添加 删除添加部门方法
+	引入 弹出框
+	数据 dialogVisible
+	添加 新方法showAddDep 里面开启弹出框
+	数据 定义添加部门结构体
+	引入 表格 用于展示添加数据 
+	数据 定义上级部门名称
+	更改 showAddDep获取上级部门名字和id
+	更改 弹出框确定按钮 触发事件 为doAddDep具体添加操作
+	方法 新方法doAddDep
+	更改 doAddDep里请求后端接口 刷新部门数据 关闭弹出框
+	方法 initDep 重置dep pname
+	更改 doAddDep刷新部门数据调用方法为initDep
+	方法 insertDepWithDeps 手动插入添加的部门信息到部门展示信息列表
+	更改 insertDepWithDeps 循环部门信息数组 如果添加的部门的parentId与某个部门相同 将数据追加到他的children
+  方法 deleteDep 确认删除 判断不为父部门 进行删除 更新部门数据 removeDepFromDeps
+  方法 removeDepFromDeps 将删除的数据从部门展示信息拿走
+  
+```
+
+---
+
+# 操作员页面设计
+
+---
+
+```
+1⃣️搜索
+引入 输入框 按钮
+2⃣️内容展示
+引入 卡片	
+数据 admin:[]
+```
+
+---
+
+# 员工资料
+
+---
+
+```
+1⃣️员工资料工具栏
+2⃣️员工展示
+3⃣️分页&普通搜索
+4⃣️添加功能
+5⃣️更新
+6⃣️删除
+7⃣️导入
+8⃣️导出
+9⃣️高级搜索
+```
+
+---
+
+# 工资账套管理
+
+---
+
+```
+1⃣️数据展示
+2⃣️添加工资帐套
+3⃣️更新工资帐套
+```
+
+---
+
+# 员工帐套功能
+
+---
+
+```
+1⃣️展示工资帐套
+2⃣️修改工资帐套/添加工资帐套
+```
+
+---
+
+# 在线聊天
+
+---
+
+```
+1⃣️界面 开源项目vue-chat  https://github.com/Zoushaozx/vue-Chat-demo
+2⃣️安装sass-loader
+3⃣️web-socket
+	安装 npm install sockjs-client
+			npm install stompjs  
+```
+
+---
+
+# 用户中心
+
+---
+
+```
+1⃣️更新密码
+	
+```
 
