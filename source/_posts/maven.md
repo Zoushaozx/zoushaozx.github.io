@@ -4,7 +4,7 @@ date: 2021-02-12 20:06:38
 tags:
 ---
 
-安装maven
+# 安装maven
 
 ```
 http://maven.apache.org/download.cgi
@@ -14,12 +14,12 @@ sudo tar -zxvf ~/Downloads/apache-maven-3.6.3-bin.tar.gz
 
 添加环境变量~/.zshrc
 export MAVEN_HOME=/usr/local/apache-maven-3.6.3
-export PATH=$ PATH:$ MAVEN_HOME/bin
+export PATH=$ PATH:$MAVEN_HOME/bin
 
 可能你的环境变量操作 /etc/profile就行
 ```
 
-maven换源
+# maven换源
 
 ```
 新建文件夹用于存放maven下载的依赖包 repository
@@ -33,9 +33,11 @@ maven换源
 	</mirror>
 ```
 
-修改仓库位置：
+# 修改仓库位置：
 
 ```
 <localRepository>你新建的存放位置</localRepository>
 ```
+
+---
 
