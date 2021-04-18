@@ -1,8 +1,17 @@
 ---
+
 title: antdpro
 date: 2021-03-31 22:51:53
 tags:
 ---
+
+## 创建antdpro项目
+
+```
+yarn create umi pages
+```
+
+
 
 ## 复刻资源管理
 
@@ -228,5 +237,20 @@ const clickTabs = (tabKey) => {
 	2⃣️选择单位 触发 selectUnit  设置 selectValue.unit  调用findChildBy 传入参数type=dept
 当selectValue.dept未设置时 就会调用screenTree 传入参数type=post
 	3⃣️就会调用screenTree 回调用findChildBy方法 将会把deptList	
+```
+
+
+
+## 复显数据
+
+```
+let apiUser = '/api/currentUser';
+获取数据直接初始化到form表单里面
+get(apiUser).then(value=>{
+	if("user" === value.userType){
+		setFromValues({returneeId:value.id,returnDeptId:value.dept});
+		form.setFieldsValue({returneeId:value.id,returnDeptId:value.dept});
+	}
+})
 ```
 

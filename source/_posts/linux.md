@@ -20,7 +20,7 @@ tail  -n  10  test.log   查询日志尾部最后10行的日志;
  tail -n +10 test.log    查询10行之后的所有日志;
 ```
 
-查看端口运行情况
+查看网络端口运行情况
 
 ```
  netstat -nultp
@@ -59,5 +59,22 @@ rz -y选择文件
 ```
 mv file mysql* mysql
 	 文件以mysql开始 移动到当前文件夹mysql
+```
+
+
+
+查看并关闭使用端口
+
+```
+lsof -i:8080
+kill -9  「端口」
+```
+
+
+
+## 查看java所在目录
+
+```
+/usr/libexec/java_home -V
 ```
 
