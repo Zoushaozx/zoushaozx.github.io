@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="application.yml配置1234567891011121314151617连接数据  spring:    datasource:      url: jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;next      username: root      password: rootzoux      driver-class-name: com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="springboot">
+<meta property="og:url" content="http://example.com/2021/04/13/04Java-springboot/index.html">
+<meta property="og:site_name" content="Zoux">
+<meta property="og:description" content="application.yml配置1234567891011121314151617连接数据  spring:    datasource:      url: jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;next      username: root      password: rootzoux      driver-class-name: com">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-13T11:31:03.000Z">
+<meta property="article:modified_time" content="2021-04-28T05:10:52.861Z">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>springboot</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about">关于</a></li>
+         
+          <li><a href="/archives">归档</a></li>
+         
+          <li><a href="/projects">项目</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/04/18/04Java-spring/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2021/04/08/02%E6%A1%86%E6%9E%B6-uniapp/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/04/13/04Java-springboot/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/04/13/04Java-springboot/&text=springboot"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/04/13/04Java-springboot/&is_video=false&description=springboot"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=springboot&body=Check out this article: http://example.com/2021/04/13/04Java-springboot/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/04/13/04Java-springboot/&name=springboot&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/04/13/04Java-springboot/&t=springboot"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#application-yml%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">application.yml配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%8E%A5%E5%8F%A3hello"><span class="toc-number">2.</span> <span class="toc-text">初始化接口hello</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">自动配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#application-yml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">application.yml配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">多配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90"><span class="toc-number">6.</span> <span class="toc-text">添加静态资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E9%A1%B5%E9%9D%A2"><span class="toc-number">7.</span> <span class="toc-text">访问页面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#thymeleaf%E8%AF%AD%E6%B3%95"><span class="toc-number">8.</span> <span class="toc-text">thymeleaf语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E9%A1%B9%E7%9B%AE%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92"><span class="toc-number">9.</span> <span class="toc-text">不同项目数据交互</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E6%95%B0%E6%8D%AE%E7%AB%AF"><span class="toc-number">9.1.</span> <span class="toc-text">生产数据端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E7%AB%AF"><span class="toc-number">9.2.</span> <span class="toc-text">消费数据端</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#service"><span class="toc-number">9.2.1.</span> <span class="toc-text">service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#controller"><span class="toc-number">9.2.2.</span> <span class="toc-text">controller</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        springboot
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name"></span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-04-13T11:31:03.000Z" itemprop="datePublished">2021-04-13</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="application-yml配置"><a href="#application-yml配置" class="headerlink" title="application.yml配置"></a>application.yml配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">连接数据</span><br><span class="line">  spring:</span><br><span class="line">    datasource:</span><br><span class="line">      url: jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;next</span><br><span class="line">      username: root</span><br><span class="line">      password: rootzoux</span><br><span class="line">      driver-class-name: com.mysql.cj.jdbc.Driver</span><br><span class="line"></span><br><span class="line">能够根据实体类 生成数据表</span><br><span class="line">  jpa:</span><br><span class="line">      hibernate:</span><br><span class="line">        ddl-auto: update</span><br><span class="line">      show-sql: true</span><br><span class="line"></span><br><span class="line">端口号</span><br><span class="line">server</span><br><span class="line">	port: 8888</span><br></pre></td></tr></table></figure>
+<h2 id="初始化接口hello"><a href="#初始化接口hello" class="headerlink" title="初始化接口hello"></a>初始化接口hello</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package com.zoux.next_superhero.controller;</span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line">import org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line">@RestController</span><br><span class="line">public class HelloController &#123;</span><br><span class="line">    @RequestMapping(&quot;&#x2F;hello&quot;)</span><br><span class="line">    public String hello()&#123;</span><br><span class="line">        return &quot;hello,world&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="自动配置"><a href="#自动配置" class="headerlink" title="自动配置"></a>自动配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">启动时自动扫描加载spring.factories所有的自动配置类，导入对应的start就会生效</span><br><span class="line">1⃣️springboot在启动的时候，从类路径下的&#x2F;MATA-INF&#x2F;spring.factories获取指定的值；</span><br><span class="line">2⃣️将这些自动配置的类导入容器，自动配置就会生效，帮助我们进行自动配置！</span><br></pre></td></tr></table></figure>
+<h2 id="application-yml配置文件"><a href="#application-yml配置文件" class="headerlink" title="application.yml配置文件"></a>application.yml配置文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">语法</span><br><span class="line">server</span><br><span class="line">	port: 8888</span><br><span class="line"></span><br><span class="line">为实体类赋值</span><br><span class="line">	配置文件</span><br><span class="line">	person:</span><br><span class="line">		name: zoux</span><br><span class="line">	具体实体类</span><br><span class="line">		添加注解 @ConfigurationProperties(perfix&#x3D;&quot;person&quot;)</span><br></pre></td></tr></table></figure>
+<h2 id="多配置文件"><a href="#多配置文件" class="headerlink" title="多配置文件"></a>多配置文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">优先级：项目根目录&#x2F;config&#x2F; &gt; 根目录下的配置文件 &gt;resource&#x2F;config&#x2F;配置文件 &gt;resource&#x2F;配置文件</span><br><span class="line"></span><br><span class="line">springboot多环境配置</span><br><span class="line">	server:</span><br><span class="line">		port: 8080</span><br><span class="line">	#选择激活的环境模块</span><br><span class="line">	spring:</span><br><span class="line">  	profiles:</span><br><span class="line">  		active: dev</span><br><span class="line">	---</span><br><span class="line">  server:</span><br><span class="line">  	port: 8081</span><br><span class="line">  #配置环境名称	</span><br><span class="line">  spring:</span><br><span class="line">  	profiles: dev</span><br><span class="line">  ---</span><br><span class="line">  server:</span><br><span class="line">  	port: test</span><br><span class="line">  spring:</span><br><span class="line">  	profiles:dev</span><br></pre></td></tr></table></figure>
+<h2 id="添加静态资源"><a href="#添加静态资源" class="headerlink" title="添加静态资源"></a>添加静态资源</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">resource目下静态资源优先级</span><br><span class="line">	resource &gt;static &gt;public</span><br><span class="line">public 放公共资源 js</span><br><span class="line">static 放静态资源 图片</span><br><span class="line">resource 放上传文件</span><br><span class="line">templates 资源 一般只能controller 访问 需要使用模板引擎</span><br></pre></td></tr></table></figure>
+<h2 id="访问页面"><a href="#访问页面" class="headerlink" title="访问页面"></a>访问页面</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">controller 返回页面名称</span><br><span class="line">templates  页面</span><br></pre></td></tr></table></figure>
+<h2 id="thymeleaf语法"><a href="#thymeleaf语法" class="headerlink" title="thymeleaf语法"></a>thymeleaf语法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;div th:utext&#x3D;&quot;$&#123;msg&#125;&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">&lt;h3 th:each&#x3D;&quot;user:$&#123;users&#125;&quot;&gt;[[$&#123;user&#125;]]&lt;&#x2F;h3&gt;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="不同项目数据交互"><a href="#不同项目数据交互" class="headerlink" title="不同项目数据交互"></a>不同项目数据交互</h2><h3 id="生产数据端"><a href="#生产数据端" class="headerlink" title="生产数据端"></a>生产数据端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1⃣️新建maven模块 application.xml&#x2F;spring.application.name&#x3D; xxxx</span><br><span class="line">2⃣️启动入口，注解</span><br><span class="line">  @EnableAsync</span><br><span class="line">  @SpringBootApplication</span><br><span class="line">  @EnableEurekaClient</span><br><span class="line">  @EnableFeignClients(basePackages &#x3D; &#123;&quot;com.gzqylc&quot;, &quot;gzqylc.com&quot;&#125;)</span><br><span class="line">  @ComponentScan(basePackages &#x3D; &#123; &quot;com.gzqylc&quot;, &quot;gzqylc.com&quot; &#125;)</span><br><span class="line">3⃣️开放数据域controller</span><br><span class="line">	这个url用于产生数据</span><br><span class="line">4⃣️例子</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@Route(value = &quot;api/public/user/&quot;, title = &quot;员工相关接口&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDataApiController</span> <span class="keyword">extends</span> <span class="title">BaseController</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Route(value = &quot;getContacts&quot;, title = &quot;通讯录树&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrgTreeSelectNode&gt; <span class="title">getContacts</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userService.getContacts().stream().filter(n -&gt; n.getId().equals(<span class="string">&quot;O001&quot;</span>)).collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="消费数据端"><a href="#消费数据端" class="headerlink" title="消费数据端"></a>消费数据端</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1⃣️建立连接 service层</span><br><span class="line">	注解@FeignClient(name &#x3D; &quot;hgs-mdd-server-data-api&quot;)</span><br><span class="line">	定义方法</span><br><span class="line">		@RequestMapping(&quot;api&#x2F;public&#x2F;user&#x2F;getContacts&quot;)</span><br><span class="line">    List&lt;OrgTreeSelectNode&gt; getContacts();</span><br><span class="line">2⃣️	实现数据接收 controller层</span><br><span class="line">	@Route(value &#x3D; &quot;&#x2F;getContacts&quot;, title &#x3D; &quot;通讯录树&quot;)</span><br><span class="line">  public List&lt;OrgTreeSelectNode&gt; getContacts()&#123;</span><br><span class="line">        return workPlatFormApiService.getContacts();</span><br><span class="line">    &#125;</span><br><span class="line">3⃣️例子    </span><br></pre></td></tr></table></figure>
+<h4 id="service"><a href="#service" class="headerlink" title="service"></a>service</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FeignClient(name = &quot;hgs-mdd-server-data-api&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">WorkPlatFormApiService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;api/public/user/getContacts&quot;)</span></span><br><span class="line">    <span class="function">List&lt;OrgTreeSelectNode&gt; <span class="title">getContacts</span><span class="params">()</span></span>;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="controller"><a href="#controller" class="headerlink" title="controller"></a>controller</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@Route(value = &quot;api/workPlatForm&quot;, title = &quot;景区管家提供的接口&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkPlatFormApiController</span> <span class="keyword">extends</span> <span class="title">BaseController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WorkPlatFormApiService workPlatFormApiService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Route(value = &quot;/getContacts&quot;, title = &quot;通讯录树&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrgTreeSelectNode&gt; <span class="title">getContacts</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> workPlatFormApiService.getContacts();</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<hr>
+
+  </div>
+  <div> 
+    <a href="https://github.com/Zoushaozx/zoushaozx.github.io/edit/myblog/source/_posts/04Java-springboot.md" target="_blank">
+             <!-- https://github.com/Zoushaozx/zoushaozx.github.io/edit/myblog/source/_posts/hello-world.md -->
+      编辑
+    </a>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about">关于</a></li>
+         
+          <li><a href="/archives">归档</a></li>
+         
+          <li><a href="/projects">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#application-yml%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">application.yml配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%8E%A5%E5%8F%A3hello"><span class="toc-number">2.</span> <span class="toc-text">初始化接口hello</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">自动配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#application-yml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">application.yml配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">多配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90"><span class="toc-number">6.</span> <span class="toc-text">添加静态资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E9%A1%B5%E9%9D%A2"><span class="toc-number">7.</span> <span class="toc-text">访问页面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#thymeleaf%E8%AF%AD%E6%B3%95"><span class="toc-number">8.</span> <span class="toc-text">thymeleaf语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E9%A1%B9%E7%9B%AE%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92"><span class="toc-number">9.</span> <span class="toc-text">不同项目数据交互</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E6%95%B0%E6%8D%AE%E7%AB%AF"><span class="toc-number">9.1.</span> <span class="toc-text">生产数据端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E7%AB%AF"><span class="toc-number">9.2.</span> <span class="toc-text">消费数据端</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#service"><span class="toc-number">9.2.1.</span> <span class="toc-text">service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#controller"><span class="toc-number">9.2.2.</span> <span class="toc-text">controller</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/04/13/04Java-springboot/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/04/13/04Java-springboot/&text=springboot"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/04/13/04Java-springboot/&is_video=false&description=springboot"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=springboot&body=Check out this article: http://example.com/2021/04/13/04Java-springboot/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/04/13/04Java-springboot/&title=springboot"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/04/13/04Java-springboot/&name=springboot&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/04/13/04Java-springboot/&t=springboot"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2021
+    Zoux
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about">关于</a></li>
+         
+          <li><a href="/archives">归档</a></li>
+         
+          <li><a href="/projects">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
