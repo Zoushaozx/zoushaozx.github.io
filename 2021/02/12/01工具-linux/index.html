@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="查找文件在什么地方 12find &#x2F; -name nodewhich node 查看日志 12345tail -100f test.log      实时监控100行日志tail  -n  10  test.log   查询日志尾部最后10行的日志; tail -n +10 test.log    查询10行之后的所有日志; 查看网络端口运行情况 1netstat -nultp 安装wg">
+    <meta name="description" content="查找文件在什么地方 12find &#x2F; -name nodewhich node 查看日志 12345tail -100f test.log      实时监控100行日志tail  -n  10  test.log   查询日志尾部最后10行的日志; tail -n +10 test.log    查询10行之后的所有日志; 查看网络端口运行情况 1234netstat -nultpki">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux">
 <meta property="og:url" content="http://example.com/2021/02/12/01%E5%B7%A5%E5%85%B7-linux/index.html">
 <meta property="og:site_name" content="Zoux">
-<meta property="og:description" content="查找文件在什么地方 12find &#x2F; -name nodewhich node 查看日志 12345tail -100f test.log      实时监控100行日志tail  -n  10  test.log   查询日志尾部最后10行的日志; tail -n +10 test.log    查询10行之后的所有日志; 查看网络端口运行情况 1netstat -nultp 安装wg">
+<meta property="og:description" content="查找文件在什么地方 12find &#x2F; -name nodewhich node 查看日志 12345tail -100f test.log      实时监控100行日志tail  -n  10  test.log   查询日志尾部最后10行的日志; tail -n +10 test.log    查询10行之后的所有日志; 查看网络端口运行情况 1234netstat -nultpki">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-02-12T15:56:56.000Z">
-<meta property="article:modified_time" content="2021-04-28T05:10:52.857Z">
+<meta property="article:modified_time" content="2021-05-04T07:24:56.190Z">
 <meta name="twitter:card" content="summary">
     
     
@@ -106,7 +106,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bjava%E6%89%80%E5%9C%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">查看java所在目录</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bjava%E6%89%80%E5%9C%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">查看java所在目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%BF%E6%97%B6%E9%97%B4%E8%BF%90%E8%A1%8Cjar"><span class="toc-number">2.</span> <span class="toc-text">长时间运行jar</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -150,7 +150,7 @@
 <p>查看日志</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tail -100f test.log      实时监控100行日志</span><br><span class="line"></span><br><span class="line">tail  -n  10  test.log   查询日志尾部最后10行的日志;</span><br><span class="line"></span><br><span class="line"> tail -n +10 test.log    查询10行之后的所有日志;</span><br></pre></td></tr></table></figure>
 <p>查看网络端口运行情况</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -nultp</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">netstat -nultp</span><br><span class="line">kill -9 </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>安装wget</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y wget</span><br></pre></td></tr></table></figure>
 <p>删除相相关软件</p>
@@ -162,10 +162,11 @@
 
 
 <p>查看并关闭使用端口</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsof -i:8080</span><br><span class="line">kill -9  「端口」</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mac  </span><br><span class="line">lsof -i:8080</span><br><span class="line">kill -9  「端口」</span><br><span class="line"></span><br><span class="line">linux</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
 <h2 id="查看java所在目录"><a href="#查看java所在目录" class="headerlink" title="查看java所在目录"></a>查看java所在目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;libexec&#x2F;java_home -V</span><br></pre></td></tr></table></figure>
+<h2 id="长时间运行jar"><a href="#长时间运行jar" class="headerlink" title="长时间运行jar"></a>长时间运行jar</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nohup java -jar plan_server-1.0.0.jar </span><br><span class="line">ps -ef|grep java</span><br><span class="line">kill -9 进程号</span><br></pre></td></tr></table></figure>
 
   </div>
   <div> 
@@ -197,7 +198,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bjava%E6%89%80%E5%9C%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">查看java所在目录</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bjava%E6%89%80%E5%9C%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">查看java所在目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%BF%E6%97%B6%E9%97%B4%E8%BF%90%E8%A1%8Cjar"><span class="toc-number">2.</span> <span class="toc-text">长时间运行jar</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
