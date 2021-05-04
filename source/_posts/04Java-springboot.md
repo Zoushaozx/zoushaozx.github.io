@@ -67,6 +67,18 @@ server
 		添加注解 @ConfigurationProperties(perfix="person")
 ```
 
+## 实体类生成数据表
+
+```
+@Entity
+@Getter
+@Setter
+@FieldNameConstants
+@Table(name = "sys_name")
+```
+
+
+
 ## 多配置文件
 
 ```

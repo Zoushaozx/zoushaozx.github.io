@@ -24,6 +24,9 @@ tail  -n  10  test.log   查询日志尾部最后10行的日志;
 
 ```
  netstat -nultp
+ kill -9 
+
+
 ```
 
 安装wget
@@ -66,8 +69,12 @@ mv file mysql* mysql
 查看并关闭使用端口
 
 ```
+mac  
 lsof -i:8080
 kill -9  「端口」
+
+linux
+
 ```
 
 
@@ -76,5 +83,13 @@ kill -9  「端口」
 
 ```
 /usr/libexec/java_home -V
+```
+
+## 长时间运行jar
+
+```
+nohup java -jar plan_server-1.0.0.jar 
+ps -ef|grep java
+kill -9 进程号
 ```
 
