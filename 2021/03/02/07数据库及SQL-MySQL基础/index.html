@@ -14,7 +14,7 @@
 <meta property="og:description" content="SQL结构化查询语言 123456DQL 数据查询语言 从表中获得数据DML 数据操作语言 添加 修改 删除表中的行TPL 事务处理语言 DCL 数据控制语言 确定单个用户和用户组对数据库对象的访问 控制表单个列的访问DDL 数据定义语言 新建表 删除表CCL 指针控制语言  1234567数据库概述	关系型数据库 - 表	RDBMS 关系型数据库管理系统 管理员 仓库  database &amp;#x">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-02T16:46:50.000Z">
-<meta property="article:modified_time" content="2021-05-04T07:24:56.194Z">
+<meta property="article:modified_time" content="2021-05-12T02:18:55.472Z">
 <meta name="twitter:card" content="summary">
     
     
@@ -106,7 +106,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">SQL结构化查询语言</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">SQL结构化查询语言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">删除一条记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E5%AF%86%E7%A0%818-0-11"><span class="toc-number">1.2.</span> <span class="toc-text">更改密码8.0.11</span></a></li></ol></li></ol>
     </div>
   </span>
 </div>
@@ -160,6 +160,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DQL数据查询语言 聚合函数</span><br><span class="line">select count(*) 人数,sum(列名) 总和,max(列名) 最高，min(列名) 最低，avg(列名) 平均 from 表名；</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DQL数据查询语言 分组查询</span><br><span class="line">group by</span><br><span class="line">select 列名 ，count(*) from 表名 where 条件 group by 列名 having 条件2（count(*) &gt;2）;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DQL数据查询语言 limit方言</span><br><span class="line">select * from 表名 limit 0，10；</span><br><span class="line">0&#x3D;（当前页-1）*10</span><br><span class="line">10 显示记录数</span><br></pre></td></tr></table></figure>
+<h2 id="删除一条记录"><a href="#删除一条记录" class="headerlink" title="删除一条记录"></a>删除一条记录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from sys_files where id &#x3D; &#39;20210507174653zx&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="更改密码8-0-11"><a href="#更改密码8-0-11" class="headerlink" title="更改密码8.0.11"></a>更改密码8.0.11</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">update user set authentication_string&#x3D;&quot;&quot; where user&#x3D;&quot;root&quot;;</span><br><span class="line">alter user &quot;root&quot;@&quot;localhost&quot; identified by&quot;root&quot;;</span><br></pre></td></tr></table></figure>
 
   </div>
   <div> 
@@ -191,7 +193,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">SQL结构化查询语言</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">SQL结构化查询语言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">删除一条记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E5%AF%86%E7%A0%818-0-11"><span class="toc-number">1.2.</span> <span class="toc-text">更改密码8.0.11</span></a></li></ol></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
