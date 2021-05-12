@@ -26,6 +26,8 @@ server
 	port: 8888
 ```
 
+## ![截屏2021-05-07 上午9.04.54](/Users/zouxing/Library/Application Support/typora-user-images/截屏2021-05-07 上午9.04.54.jpg)
+
 ## 初始化接口hello
 
 ```
@@ -208,4 +210,33 @@ public class WorkPlatFormApiController extends BaseController {
 ```
 
 ---
+
+## 项目打包上线
+
+---
+
+```
+聚合项目主项目打包方式pom
+静态资源尽量放到resource/static
+rz -y 上传jar包
+nohup java -jar plan_server-1.0.0.jar  运行项目
+ps -ef|grep javakill -9 进程号  关闭项目
+```
+
+---
+
+## mvc结构
+
+```
+domain @Entity
+dao @Repository
+controller @RestController
+service @Service
+```
+
+## jpa存储文字乱码
+
+```
+url加上   ?characterEncoding=utf-8
+```
 

@@ -144,3 +144,16 @@ select * from 表名 limit 0，10；
 10 显示记录数
 ```
 
+## 删除一条记录
+
+```
+delete from sys_files where id = '20210507174653zx';
+```
+
+## 更改密码8.0.11
+
+```
+update user set authentication_string="" where user="root";
+alter user "root"@"localhost" identified by"root";
+```
+
