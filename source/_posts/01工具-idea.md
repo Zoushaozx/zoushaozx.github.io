@@ -23,3 +23,13 @@ maven->unignore Projects
 project struture->modules->选中src下java将其变为Source
 ```
 
+idea 插件超时，去官网下载插件，直接安装压缩包
+
+ jrebel插件 热部署
+
+```
+获取guid https://www.guidgenerator.com/online-guid-generator.aspx
+填写激活码 https://jrebel.qekang.com/
+	https://jrebel.qekang.com/{guid}
+```
+
